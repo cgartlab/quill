@@ -1,0 +1,143 @@
+# Quill
+
+> 结构为骨，自由为魂，真诚为血，高信噪比为气。
+
+**Quill** 是一个结构化长文写作 Skill——把模糊的写作意图，转化为可验证、可追溯的结构化数据。它不是写作工具，而是**写作判断层**：替你挡低级错误、维持风格一致性、把事实与推测分开。定价值观、定观点、定去留的权力，始终留给创作者。
+
+适用于 Claude Code、Codex、OpenCode、Obsidian Agent Client 等 Agent Skills 标准（[agentskills.io](https://agentskills.io)）环境。
+
+---
+
+## 为什么需要它
+
+长文写作的失败，绝大多数不是"没东西可写"，而是"材料丰富却理不清"。
+
+人脑能同时持有的工作记忆容量极小；当论点、证据、读者、风格四件事同时占用心智，写作就会卡住或跑题。
+
+Quill 的解法：把这四件事从大脑里"卸载"到四个独立文件中。每个文件只回答一个问题，互相不耦合，但通过 `_index.md` 互相关联。
+
+## 四文件架构
+
+每篇文章是一个文件夹（`YYYY-MM-DD-slug/`），包含六个文件：
+
+| 文件 | 只回答的问题 | 完成的标志 |
+|------|------------|----------|
+| `claim.md` | 这篇文章最想传递什么？ | 一句话核心论点 + 3-5 条支撑要点 |
+| `evidence.md` | 我凭什么这么说？ | 每条证据有来源、可信度、链接 |
+| `audience.md` | 我在对谁说？他读前读后有何不同？ | 读前状态 + 读后状态 |
+| `style.md` | 用什么语气和结构来说？ | 语调、开篇钩子、隐喻、结尾 |
+| `_index.md` | 文章入口与状态 | frontmatter + 完成度 checklist |
+| `draft.md` | 文章正文 | 草稿 |
+
+```
+40-Writing/
+└── 2026-09-20-ai-design-system/
+    ├── _index.md          # 文章入口 + 状态 checklist
+    ├── claim.md           # 核心论点
+    ├── evidence.md        # 证据与逻辑
+    ├── audience.md        # 读者认知状态
+    ├── style.md           # 风格与修辞
+    └── draft.md           # 文章草稿
+```
+
+## 九步工作流（全程模型驱动，无脚本）
+
+1. **创建文章项目** — 模型直接创建文件夹与六文件
+2. **定义核心论点** — 一句话论点 + 支撑要点
+3. **收集证据** — 每条证据可点击核验，画推理链
+4. **定义受众状态** — 读前/读后认知差
+5. **定义风格与修辞** — 语调、钩子、隐喻、结尾
+6. **写作（全流程支持）** — 碎片化写作四步：捡骨头 → 搭建骨架 → 组装完整 → 持续完善
+7. **反驳** — 草稿写完立即找反例反驳（事实/逻辑/范围/价值反例）
+8. **验证** — 模型读取六文件，按 8 项标准判断
+9. **生成写作简报**（可选）— 合并四文件供投稿对齐
+
+所有操作（创建、校验、汇总、反驳）由模型自身读写与判断完成，**不依赖任何脚本**。这与作者知识库 AGENTS.md 的红线一致：禁止脚本批量修改笔记，读取 > 建议 > 手动修改。
+
+## 环境自动探测
+
+激活时自动检测当前 harness/agent 环境（Codex / Claude Code / OpenCode / Obsidian Agent Client / DSH / CC Switch 托管），按环境特征适配安装路径、文件工具、frontmatter 约定。详见 `references/environment-detection.md`。
+
+## 安装
+
+### Claude Code
+
+```bash
+# 全局
+cp -r quill ~/.claude/skills/quill
+# 或项目级
+cp -r quill .claude/skills/quill
+```
+
+### Codex
+
+```bash
+cp -r quill ~/.agents/skills/quill
+```
+
+### OpenCode
+
+```bash
+# 项目级（优先）
+cp -r quill .opencode/skills/quill
+# 或全局
+cp -r quill ~/.config/opencode/skills/quill
+```
+
+### Obsidian Agent Client
+
+将 `quill` 目录放入 Agent 的 skills 目录，重启 Agent Client。Quill 会自动探测 Vault 环境并在 `40-Writing/` 下建项目。
+
+### CC Switch 托管
+
+若由 CC Switch 管理，skill 源在 `~/.cc-switch/skills/quill/`（符号链接进各 app）。改 skill 本身时改源，勿改链接副本。
+
+## 目录结构
+
+```
+quill/
+├── SKILL.md                      # Skill 清单 + 九步工作流 + 环境探测 + 模型自检
+├── references/
+│   ├── environment-detection.md  # 环境自动探测与适配
+│   ├── framework.md              # 四文件架构说明
+│   ├── evidence-guide.md         # 证据收集指南 + 证据反模式
+│   ├── writing-craft.md          # 写作工艺：碎片化四步 + 文章骨架 + 句子声音 + 起草规则 + 写作自检
+│   ├── obsidian-adaptation.md    # Obsidian 适配（frontmatter/双链/Dataview）
+│   └── sspai-format.md           # 少数派首页写作格式规范
+├── assets/
+│   ├── templates/                # 四文件模板（claim/evidence/audience/style）
+│   └── examples/
+│       └── sample-article/       # 完整六文件示范
+├── LICENSE
+├── README.md
+└── writing-skill-dev-doc.md      # 开发文档
+```
+
+## 渐进式披露
+
+Quill 遵循"渐进式披露"——Skill 清单（`SKILL.md`）只含核心逻辑，详细参考按需加载：
+
+- 激活时 → `references/environment-detection.md`
+- 问架构 → `references/framework.md`
+- 收证据 → `references/evidence-guide.md`
+- 进写作 → `references/writing-craft.md`
+- 用 Obsidian → `references/obsidian-adaptation.md`
+- 发少数派 → `references/sspai-format.md`
+
+## 设计理念
+
+- **结构为骨**：四文件是思维标本的骨架
+- **自由为魂**：骨架之上，写作是即兴的
+- **真诚为血**：不编来源、不把推测写成事实、不代笔全文
+- **高信噪比为气**：短句优先、具体例子、少空泛形容词
+
+## 许可证
+
+[CC BY-NC-SA 4.0](./LICENSE) — 署名-非商业性-相同方式共享 4.0 国际。
+
+## 致谢
+
+- 风格与价值观源自 [cgartlab-obsidian](https://github.com/cgartlab/cgartlab-obsidian) 知识库的 AGENTS.md 与创作风格契约
+- 写作流程源自 cgartlab.com《碎片写作——建立一具思维标本》
+- 少数派格式规范源自 [少数派创作手册·风格指南](https://manual.sspai.com/rules/manual-of-style/)
+- 架构范式参考 [edic-design-system](https://github.com/cgartlab/edic-design-system)

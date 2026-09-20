@@ -1,0 +1,24 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Obsidian workspace (not vault content)
+workspace.json
+workspace-mobile.json
+
+# Node (if any tooling added later)
+node_modules/
+package-lock.json
+
+# Tmp / backup
+*.tmp
+*.bak
+*~
