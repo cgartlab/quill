@@ -1,6 +1,11 @@
 ---
 name: quill
 description: 结构化长文写作框架。管理文章的核心论点、证据、受众和风格，适配 Obsidian Markdown 工作流。当用户需要撰写博客、论文、通讯或任何非虚构长文时使用。全程不依赖脚本——创建、校验、汇总、反驳均由模型自身读写与判断完成；激活时自动探测当前 harness/agent 环境并适配。
+whenToUse: 用户要写博客、通讯、论文或任何非虚构长文；或想把零散想法整理成有论点有证据的文章；或已有草稿但理不清主线；或在 Obsidian Vault 中用结构化方式管理写作项目。
+metadata:
+  version: "2.4.0"
+  date: "2026-09-20"
+  reference: "https://github.com/cgartlab/quill"
 ---
 
 # Quill：结构化长文写作框架

@@ -4,7 +4,7 @@
 
 **Quill** 是一个结构化长文写作 Skill——把模糊的写作意图，转化为可验证、可追溯的结构化数据。它不是写作工具，而是**写作判断层**：替你挡低级错误、维持风格一致性、把事实与推测分开。定价值观、定观点、定去留的权力，始终留给创作者。
 
-适用于 Claude Code、Codex、OpenCode、Obsidian Agent Client 等 Agent Skills 标准（[agentskills.io](https://agentskills.io)）环境。
+适用于 DSH（DeepSeek Harness）、Claude Code、Codex、OpenCode、Obsidian Agent Client 等 Agent Skills 标准（[agentskills.io](https://agentskills.io)）环境。
 
 ---
 
@@ -94,6 +94,23 @@ Quill 的解法：把这四件事从大脑里"卸载"到四个独立文件中。
 ```
 
 > 提示词里的仓库地址换成你的 fork 或本地路径即可。私有仓库需先 `gh auth login`。
+
+### DSH (DeepSeek Harness)
+
+DSH 自动从 `~/.dsh/skills/`（用户级，rank 400）和 `<project>/.dsh/skills/`（项目级，rank 100）发现 skill。无需手动注册——放入即被 watcher 发现。
+
+```bash
+# 用户级安装——推荐用 junction/symlink，repo 改动即时反映：
+# Windows (junction，无需管理员)
+mklink /J "%USERPROFILE%\.dsh\skills\quill" "D:\path\to\quill"
+# macOS / Linux (symlink)
+ln -s /path/to/quill ~/.dsh/skills/quill
+
+# 或直接复制（改动后需重新复制）
+cp -r quill ~/.dsh/skills/quill
+```
+
+安装后 DSH 会话目录自动出现 `quill`，模型可调用 `skill({ name: "quill" })` 加载完整指令。
 
 ### Claude Code
 
