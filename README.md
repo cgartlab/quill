@@ -60,6 +60,41 @@ Quill 的解法：把这四件事从大脑里"卸载"到四个独立文件中。
 
 ## 安装
 
+> 下面这段提示词可直接粘贴到任何 Agent 对话框（Claude Code、Codex、OpenCode、Obsidian Agent Client 等），让 Agent 自动安装并激活 Quill。
+
+### 一键安装提示词（可粘贴）
+
+```
+安装并加载写作 skill「Quill」：
+
+1. 从 GitHub 克隆或下载 skill 包：
+   git clone https://github.com/cgartlab/quill.git quill
+   （若仓库私有，用你已认证的 gh：gh repo clone cgartlab/quill quill）
+
+2. 把 quill/ 目录放到当前 harness 的 skills 目录（你自动探测应放哪）：
+   - Claude Code → ~/.claude/skills/ 或 .claude/skills/
+   - Codex → ~/.agents/skills/
+   - OpenCode → .opencode/skills/ 或 ~/.config/opencode/skills/
+   - Obsidian Agent Client → Agent 的 skills 目录
+   若 ~/.cc-switch/ 存在（CC Switch 托管），源放 ~/.cc-switch/skills/quill/
+
+3. 读取 quill/SKILL.md，将其注册为可用 skill。
+   触发条件：用户要写博客、通讯、论文或任何非虚构长文；或想把零散想法整理成有论点有证据的文章；或已有草稿但理不清主线。
+
+4. 激活后先做环境探测（读 SKILL.md「环境自动探测与适配」段），
+   用一句话告诉我检测到的环境与适配方式，然后等待我的写作意图。
+
+5. 硬约束（来自 SKILL.md，激活即生效）：
+   - 全程模型驱动，不跑脚本
+   - 不编来源、不编事实、不把推测写成事实、不留 AI 占位文本
+   - 不用空泛情绪词（震撼/颠覆/史诗级）替代证据
+   - 你保留最终写作权——定观点、定去留、定声音
+
+装好后回复「Quill 已就绪」即可。
+```
+
+> 提示词里的仓库地址换成你的 fork 或本地路径即可。私有仓库需先 `gh auth login`。
+
 ### Claude Code
 
 ```bash
