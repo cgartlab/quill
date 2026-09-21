@@ -3,7 +3,7 @@ name: quill
 description: 结构化长文写作框架。管理文章的核心论点、证据、受众和风格，适配 Obsidian Markdown 工作流。当用户需要撰写博客、论文、通讯或任何非虚构长文时使用。全程不依赖脚本——创建、校验、汇总、反驳均由模型自身读写与判断完成；激活时自动探测当前 harness/agent 环境并适配。
 whenToUse: 用户要写博客、通讯、论文或任何非虚构长文；或想把零散想法整理成有论点有证据的文章；或已有草稿但理不清主线；或在 Obsidian Vault 中用结构化方式管理写作项目。
 metadata:
-  version: "2.4.0"
+  version: "2.5.0"
   date: "2026-09-20"
   reference: "https://github.com/cgartlab/quill"
 ---
@@ -43,9 +43,9 @@ Quill 通过四个文件，把模糊的写作意图转化为可验证、可追�
 
 Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harness / agent 环境，再按其特征适配——这是自动探测功能，不是手动配置。
 
-1. **探测信号**：读环境变量（`DSH_*` / `CODEX_*` / `CLAUDE_*`）、查 skill 安装路径（`~/.agents/skills/`、`~/.claude/skills/`、`.opencode/`）、判断是否在 Obsidian Vault（PARA 目录 + `.obsidian/`）、查可用工具（`obsidian` CLI、文件工具、`present`）、查 `~/.cc-switch/`（CC Switch 托管：仅在维护 skill 本身时关心，详见 `references/environment-detection.md`）。单一信号不足以下结论，至少两处印证。
+1. **探测信号**：读环境变量（`DSH_*` / `CODEX_*` / `CLAUDE_*`）、查 skill 安装路径（`~/.agents/skills/`、`~/.claude/skills/`、`.opencode/`）、判断是否在 Obsidian Vault（PARA 目录 + `.obsidian/`）、查可用工具（`obsidian` CLI、文件工具、`present`、提问工具）、查 `~/.cc-switch/`（CC Switch 托管：仅在维护 skill 本身时关心，详见 `references/environment-detection.md`）。单一信号不足以下结论，至少两处印证。
 2. **综合判断**环境：Codex / Claude Code / OpenCode / Obsidian Agent Client / DSH / 其他；若 `~/.cc-switch/` 存在，标注「由 CC Switch 托管」——改 skill 本身时改 `~/.cc-switch/skills/quill/` 源、勿改链接副本。
-3. **按环境适配**：skill 安装与触发方式、文件读写工具、frontmatter 与目录约定、CLI 可用性。
+3. **按环境适配**：skill 安装与触发方式、文件读写工具、frontmatter 与目录约定、CLI 可用性、提问工具（DSH 为 `ask_user_question`，其他 harness 见 `references/conception-guide.md` 适配表）。
 4. **一句话向用户确认**环境与适配方式；不确定则列候选请用户确认，不默认假设。
 
 > 逐环境探测信号与适配细则见 `references/environment-detection.md`。
@@ -59,36 +59,63 @@ Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harn
 1. 在用户的 `40-Writing/` 目录（或当前工作目录）下创建文件夹 `YYYY-MM-DD-<slug>/`。
 2. 从 `assets/templates/` 读取四个模板，写入 `claim.md`、`evidence.md`、`audience.md`、`style.md`。
 3. 生成 `_index.md`（frontmatter 含 `type: index`、`title`、`slug`、`date`、`created`、`updated`、`description`、`status: draft`、`word-count: 0`、`tags`、`series`，及完成度 checklist）与 `draft.md`（`type: draft`、`status: draft`、`created`、`updated`、`description`，含标题占位）。
-4. 输出文件清单，提示用户打开 `claim.md` 定义核心论点。
+4. 输出文件清单，提示用户进入第二步构思引导。
 
-### 第二步：定义核心论点
+### 第二步：构思引导（结构化提问）
 
-读取 `assets/templates/claim.md`，引导用户填写：一句话核心论点、3-5 条支撑要点、论证类型（事实 / 价值 / 政策）。
+读完用户的写作意图后，**用结构化提问工具引导用户构思文章**——不要让用户面对空白模板，而是提出具体选项让用户选择。
+
+读 `references/conception-guide.md`，调用当前 harness 的提问工具（DSH 为 `ask_user_question`，其他 harness 见该参考文档的适配表），分三轮提问：
+
+**第一轮 — 定方向**（一次调用多个问题）：
+
+1. 文章类型：观点论述 / 经验分享 / 技术解析 / 趋势分析
+2. 核心论点方向：根据用户意图提出 2-4 个具体论点候选（每个含一句话论点 + 适用场景）
+3. 论证类型：事实主张 / 价值主张 / 政策主张
+
+**第二轮 — 定读者**：
+
+4. 读者画像：提出 2-3 个读者画像候选
+5. 读者读前状态：针对选定画像，提出"他现在相信什么"的误解 / 盲区 / 情感候选
+
+**第三轮 — 定风格**：
+
+6. 语调：直接克制 / 带调侃 / 严肃论证
+7. 开篇钩子：问题 / 场景 / 数据 / 引用（根据论点推荐一种）
+8. 结尾动作：引导评论 / 引导订阅 / 纯收束
+
+> 每个问题标注推荐项（放第一位 + "(推荐)"）。用户可选已有项或自行补充。
+> 三轮答完后，用答案预填 `claim.md` / `audience.md` / `style.md`，然后进入第三步做精修。
+> 无提问工具的 harness 退化为纯文本列举选项 + 等待用户回复。
+
+### 第三步：定义核心论点（精修）
+
+读取 `assets/templates/claim.md`，在第二步预填的基础上精修：一句话核心论点、3-5 条支撑要点、论证类型（事实 / 价值 / 政策）。
 一句话论点要具体、可反驳、有立场；避免"浅谈 X"式标题。支撑要点要能各自独立成段。
 
-### 第三步：收集证据
+### 第四步：收集证据
 
 读取 `references/evidence-guide.md`，引导用户：列出每条证据的来源、可信度、链接；绘制从证据到论点的推理链（归纳 / 演绎 / 类比）；标注待核查项。
 每条证据必须可点击核验；推理链要标明类型与潜在漏洞。
 
-### 第四步：定义受众状态
+### 第五步：定义受众状态
 
-读取 `assets/templates/audience.md`，引导用户填写：读前状态（误解 / 盲区 / 情感）、读后状态（新认知 / 可执行动作）。
+读取 `assets/templates/audience.md`，在第二步预填的基础上精修：读前状态（误解 / 盲区 / 情感）、读后状态（新认知 / 可执行动作）。
 读前状态要具体到"他现在相信什么"，不是泛泛的"新手"；读后状态必须有一个可执行动作。
 
-### 第五步：定义风格与修辞
+### 第六步：定义风格与修辞
 
-读取 `assets/templates/style.md`，引导用户选择语调、开篇钩子、关键隐喻、结尾动作，并确认纲领与禁用清单已纳入；勾选发布平台以决定加载哪份格式规范。
+读取 `assets/templates/style.md`，在第二步预填的基础上精修：语调、开篇钩子、关键隐喻、结尾动作，并确认纲领与禁用清单已纳入；勾选发布平台以决定加载哪份格式规范。
 开篇钩子要有具体场景；关键隐喻要贯穿全文；语调要和发布平台匹配。
 
-### 第六步：写作（全流程支持）
+### 第七步：写作（全流程支持）
 
 读 `references/writing-craft.md`，按碎片化写作四步推进——捡骨头 → 搭建骨架 → 组装完整 → 持续完善。AI 协助收集碎片、提议骨架、起草段落、修句润色、做写作自检；你保留最终写作权，定观点与去留。
 
 > 起草规则：不编来源、不编事实、推测标明、用具体例子、标注需人审核处。
 > 若文章面向少数派（sspai）首页发布，编辑正文前先读 `references/sspai-format.md`，按其格式与标准规范落笔：中英文间加空格、直角引号、标题不跳级、图片宽度语法 `![描述|宽度]`、题图尺寸、链接文本、AI 辅助披露 callout 等。
 
-### 第七步：反驳（找反例反驳草稿）
+### 第八步：反驳（找反例反驳草稿）
 
 草稿写完后，**立即**由模型找出反例与反论来反驳自己的草稿——这是规则，不是可选步骤，也不靠定期更新。
 
@@ -103,7 +130,7 @@ Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harn
 
 > 反例按以下优先级寻找：① 本地（Obsidian 知识库与本地仓库）② cgartlab.com 历史案例（已发布文章）③ github.com/cgartlab 开发案例（用户 GitHub 仓库）④ 联网（通用检索）。先在自己的语料里找反例，再向外扩展；不跑脚本。
 
-### 第八步：验证（模型驱动）
+### 第九步：验证（模型驱动）
 
 **由你（模型）读取六个文件并按以下标准判断**，不跑脚本、不数字符：
 
@@ -113,12 +140,12 @@ Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harn
 - style 已选：至少一种语调已勾选。
 - draft 达意：正文足以支撑论点（用你的判断，不设机械字数）。
 - 真诚：无编造来源、无把推测写成事实、无 AI 占位文本。
-- 写作自检已做：第六步的写作自检（声音偏差 / 证据充分性 / 逻辑漏洞 / 骨架塌陷 / 信噪比 / 过渡）已执行。
-- 反驳已做：第七步的反例与处理已记回 claim / evidence。
+- 写作自检已做：第七步的写作自检（声音偏差 / 证据充分性 / 逻辑漏洞 / 骨架塌陷 / 信噪比 / 过渡）已执行。
+- 反驳已做：第八步的反例与处理已记回 claim / evidence。
 - 平台格式：若面向少数派，正文是否符合 `references/sspai-format.md` 的硬规则（中英文空格、标点形态、标题层级、链接文本、图片等）。
 - 全部通过才提示可进 review；任一不过，指出问题并回到对应步骤。
 
-### 第九步（可选）：生成写作简报
+### 第十步（可选）：生成写作简报
 
 **由你（模型）读取** claim / evidence / audience / style 四文件，合并为一份"写作简报"输出（核心论点 / 关键证据 / 读者状态 / 风格要求），供投稿或协作前对齐。
 
@@ -156,11 +183,10 @@ Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harn
 仅在需要时加载对应参考文档：
 
 - `references/environment-detection.md`：Skill 激活、或用户问"在这里怎么用 Quill"时加载。
+- `references/conception-guide.md`：进入构思引导阶段（第二步）时加载，承载三轮提问设计、选项原则、答案去向。
 - `references/framework.md`：用户询问"四文件架构是什么""为什么是四个文件"时加载。
-- `references/evidence-guide.md`：进入证据收集阶段（第三步）时加载。
+- `references/evidence-guide.md`：进入证据收集阶段（第四步）时加载。
 - `references/obsidian-adaptation.md`：用户使用 Obsidian、或询问与 Obsidian / Dataview / Agent Client 协作时加载。
-- `references/sspai-format.md`：编辑面向少数派首页的正文（第六步）时加载。
-- `references/writing-craft.md`：进入写作阶段（第六步）时加载，承载碎片化写作四步、文章骨架、句子与声音规则、起草规则、写作自检。
-
-
+- `references/sspai-format.md`：编辑面向少数派首页的正文（第七步）时加载。
+- `references/writing-craft.md`：进入写作阶段（第七步）时加载，承载碎片化写作四步、文章骨架、句子与声音规则、起草规则、写作自检。
 
