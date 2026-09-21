@@ -1,8 +1,8 @@
 # Quill Skill 开发文档
 
-**版本**：2.5.0
-**状态**：正式版（模型驱动 + 少数派格式 + 环境自动探测含 CC Switch + 草稿反驳规则 + 反例优先级 + 写作工艺 + 构思引导）
-**最后更新**：2026-09-20
+**版本**：2.6.0
+**状态**：正式版（模型驱动 + 少数派格式 + 环境自动探测 + 草稿反驳规则 + 反例优先级 + 写作工艺 + 构思引导 + 缺陷修复）
+**最后更新**：2026-09-21
 
 ---
 
@@ -68,7 +68,7 @@ quill/
 
 ## 五、模型驱动的校验（替代脚本）
 
-SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取六文件后按以下标准判断，不跑脚本、不数字符：文件完整性 / claim 非空 / evidence 附链接 / style 已选 / draft 达意 / 真诚 / 反驳已做 / 平台格式（少数派则对 `sspai-format.md` 硬规则）。任一不过回到对应步骤。
+SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取六文件后按以下标准判断，不跑脚本、不数字符：文件完整性 / claim 非空 / evidence 附链接 / style 已选 / draft 达意 / 真诚 / 写作自检已做 / 反驳已做 / 平台格式（少数派则对 `sspai-format.md` 硬规则）。任一不过回到对应步骤。
 
 ## 六、少数派格式规范的融入
 
@@ -111,8 +111,8 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取六文件
 - 阶段二（用户手动测试）：在 Obsidian + Agent Client 中实测触发与按需加载（由作者本人手动进行）。
 - 阶段三（done）：环境自动探测与适配——Skill 激活时自动检测当前 harness/agent 环境（含按需探测 CC Switch 托管：`~/.cc-switch/`），按环境特征与上下文适配（安装路径、文件工具、frontmatter、CLI、skill 源位置）。见 `references/environment-detection.md`。
 - 阶段四（done）：草稿反驳规则——写完 draft 后立即由模型找反例反驳草稿（事实/逻辑/范围/价值反例），吸收或驳倒，记回 claim/evidence。是 SKILL.md 第八步的规则，非定期维护任务。
-- 阶段五（done）：写作工艺——eferences/writing-craft.md 整合碎片化写作四步、文章骨架、句子与声音规则、起草规则、写作自检；SKILL.md 第七步改为全流程写作支持。
-- 阶段六（done）：构思引导——新增 eferences/conception-guide.md，SKILL.md 第二步用结构化提问工具引导用户定方向 / 定读者 / 定风格（三轮八问），充分利用 DSH / Codex / OpenCode 等 harness 的多选提问功能。
+- 阶段五（done）：写作工艺——references/writing-craft.md 整合碎片化写作四步、文章骨架、句子与声音规则、起草规则、写作自检；SKILL.md 第七步改为全流程写作支持。
+- 阶段六（done）：构思引导——新增 references/conception-guide.md，SKILL.md 第二步用结构化提问工具引导用户定方向 / 定读者 / 定风格（三轮八问），充分利用 DSH / Codex / OpenCode 等 harness 的多选提问功能。
 
 ## 十二、已知边界
 

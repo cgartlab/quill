@@ -1,10 +1,9 @@
 ---
 name: quill
-description: 结构化长文写作框架。管理文章的核心论点、证据、受众和风格，适配 Obsidian Markdown 工作流。当用户需要撰写博客、论文、通讯或任何非虚构长文时使用。全程不依赖脚本——创建、校验、汇总、反驳均由模型自身读写与判断完成；激活时自动探测当前 harness/agent 环境并适配。
-whenToUse: 用户要写博客、通讯、论文或任何非虚构长文；或想把零散想法整理成有论点有证据的文章；或已有草稿但理不清主线；或在 Obsidian Vault 中用结构化方式管理写作项目。
+description: 结构化长文写作框架。管理文章的核心论点、证据、受众和风格，适配 Obsidian Markdown 工作流。当用户要写博客、通讯、论文或任何非虚构长文、想把零散想法整理成有论点有证据的文章、或已有草稿却理不清主线时使用——只要意图是把想法变成有论点的长文就应激活本 skill。全程不依赖脚本：创建、校验、汇总、反驳均由模型自身读写与判断完成；激活时自动探测当前 harness/agent 环境并适配。不用于小说/诗歌/剧本等虚构创作或邮件/评论/即时消息等短文本。
 metadata:
-  version: "2.5.0"
-  date: "2026-09-20"
+  version: "2.6.0"
+  date: "2026-09-21"
   reference: "https://github.com/cgartlab/quill"
 ---
 
@@ -24,16 +23,7 @@ Quill 通过四个文件，把模糊的写作意图转化为可验证、可追�
 
 四个文件（claim / evidence / audience / style）即一具"思维标本"的骨架——这与"碎片化写作"（捡骨头 → 搭建骨架 → 组装完整 → 持续完善）是同一件事的不同切面：四文件是资产层，碎片化写作是过程层。
 
-## 何时使用
-
-当用户表达以下意图之一时触发本 Skill：
-
-- 要写一篇博客、通讯、论文或任何非虚构长文
-- 想把零散想法整理成有论点、有证据的文章
-- 已有草稿但理不清主线，想做结构化梳理
-- 在 Obsidian Vault 中用结构化方式管理写作项目
-
-**不使用场景**：
+## 不使用场景
 
 - 写小说、诗歌、剧本等虚构创作
 - 写邮件、评论、即时消息等短文本
@@ -43,8 +33,8 @@ Quill 通过四个文件，把模糊的写作意图转化为可验证、可追�
 
 Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harness / agent 环境，再按其特征适配——这是自动探测功能，不是手动配置。
 
-1. **探测信号**：读环境变量（`DSH_*` / `CODEX_*` / `CLAUDE_*`）、查 skill 安装路径（`~/.agents/skills/`、`~/.claude/skills/`、`.opencode/`）、判断是否在 Obsidian Vault（PARA 目录 + `.obsidian/`）、查可用工具（`obsidian` CLI、文件工具、`present`、提问工具）、查 `~/.cc-switch/`（CC Switch 托管：仅在维护 skill 本身时关心，详见 `references/environment-detection.md`）。单一信号不足以下结论，至少两处印证。
-2. **综合判断**环境：Codex / Claude Code / OpenCode / Obsidian Agent Client / DSH / 其他；若 `~/.cc-switch/` 存在，标注「由 CC Switch 托管」——改 skill 本身时改 `~/.cc-switch/skills/quill/` 源、勿改链接副本。
+1. **探测信号**：读环境变量（`DSH_*` / `CODEX_*` / `CLAUDE_*`）、查 skill 安装路径（`~/.agents/skills/`、`~/.claude/skills/`、`.opencode/`）、判断是否在 Obsidian Vault（PARA 目录 + `.obsidian/`）、查可用工具（`obsidian` CLI、文件工具、`present`、提问工具）。单一信号不足以下结论，至少两处印证。
+2. **综合判断**环境：Codex / Claude Code / OpenCode / Obsidian Agent Client / DSH / 其他；若需维护 skill 本身且 `~/.cc-switch/` 存在，改源文件而非链接副本（见 `references/environment-detection.md`）。
 3. **按环境适配**：skill 安装与触发方式、文件读写工具、frontmatter 与目录约定、CLI 可用性、提问工具（DSH 为 `ask_user_question`，其他 harness 见 `references/conception-guide.md` 适配表）。
 4. **一句话向用户确认**环境与适配方式；不确定则列候选请用户确认，不默认假设。
 
@@ -56,7 +46,7 @@ Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harn
 
 当用户提出写作意图时，**由你（模型）直接创建**文章项目，不调用任何脚本：
 
-1. 在用户的 `40-Writing/` 目录（或当前工作目录）下创建文件夹 `YYYY-MM-DD-<slug>/`。
+1. 在环境探测确定的写作根目录下创建文件夹 `YYYY-MM-DD-<slug>/`（Obsidian Vault 默认 `40-Writing/`，其他环境用当前工作目录）。
 2. 从 `assets/templates/` 读取四个模板，写入 `claim.md`、`evidence.md`、`audience.md`、`style.md`。
 3. 生成 `_index.md`（frontmatter 含 `type: index`、`title`、`slug`、`date`、`created`、`updated`、`description`、`status: draft`、`word-count: 0`、`tags`、`series`，及完成度 checklist）与 `draft.md`（`type: draft`、`status: draft`、`created`、`updated`、`description`，含标题占位）。
 4. 输出文件清单，提示用户进入第二步构思引导。
@@ -128,7 +118,7 @@ Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harn
 - 对每条反例做判断：**吸收**（修正论点 / 补边界）、**驳倒**（给出反驳理由）、或**确认破例并标明**。
 - 把反例与处理记回 `claim.md` / `evidence.md`（潜在漏洞、待核查项），必要时回改 `draft.md`。
 
-> 反例按以下优先级寻找：① 本地（Obsidian 知识库与本地仓库）② cgartlab.com 历史案例（已发布文章）③ github.com/cgartlab 开发案例（用户 GitHub 仓库）④ 联网（通用检索）。先在自己的语料里找反例，再向外扩展；不跑脚本。
+> 反例按以下优先级寻找：① 本地语料（你的 Obsidian 知识库与本地仓库）② 你已发表的历史文章 ③ 你的 GitHub 仓库 ④ 联网（通用检索）。先在自己的语料里找反例，再向外扩展；不跑脚本。
 
 ### 第九步：验证（模型驱动）
 
@@ -164,7 +154,7 @@ Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harn
 
 ## 目录约定
 
-文章项目位于用户 Obsidian Vault 的 `40-Writing/` 目录下，命名格式为 `YYYY-MM-DD-slug`。
+文章项目位于环境探测确定的写作根目录下，命名格式为 `YYYY-MM-DD-slug`（Obsidian Vault 默认 `40-Writing/`，其他环境用当前工作目录）。
 每篇文章包含 `_index.md`、`claim.md`、`evidence.md`、`audience.md`、`style.md`、`draft.md` 六个文件。
 
 ```

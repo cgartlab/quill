@@ -50,7 +50,7 @@ Quill 的解法：把这四件事从大脑里"卸载"到四个独立文件中。
 6. **定义风格与修辞** — 语调、钩子、隐喻、结尾
 7. **写作（全流程支持）** — 碎片化写作四步：捡骨头 → 搭建骨架 → 组装完整 → 持续完善
 8. **反驳** — 草稿写完立即找反例反驳（事实/逻辑/范围/价值反例）
-9. **验证** — 模型读取六文件，按 8 项标准判断
+9. **验证** — 模型读取六文件，按 9 项标准判断
 10. **生成写作简报**（可选）— 合并四文件供投稿对齐
 
 所有操作（创建、校验、汇总、反驳）由模型自身读写与判断完成，**不依赖任何脚本**。这与作者知识库 AGENTS.md 的红线一致：禁止脚本批量修改笔记，读取 > 建议 > 手动修改。
@@ -152,6 +152,7 @@ quill/
 ├── SKILL.md                      # Skill 清单 + 十步工作流 + 环境探测 + 模型自检
 ├── references/
 │   ├── environment-detection.md  # 环境自动探测与适配
+│   ├── conception-guide.md       # 构思引导：三轮结构化提问
 │   ├── framework.md              # 四文件架构说明
 │   ├── evidence-guide.md         # 证据收集指南 + 证据反模式
 │   ├── writing-craft.md          # 写作工艺：碎片化四步 + 文章骨架 + 句子声音 + 起草规则 + 写作自检
@@ -171,6 +172,7 @@ quill/
 Quill 遵循"渐进式披露"——Skill 清单（`SKILL.md`）只含核心逻辑，详细参考按需加载：
 
 - 激活时 → `references/environment-detection.md`
+- 构思引导 → `references/conception-guide.md`
 - 问架构 → `references/framework.md`
 - 收证据 → `references/evidence-guide.md`
 - 进写作 → `references/writing-craft.md`
