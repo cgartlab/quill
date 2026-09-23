@@ -18,7 +18,7 @@ Quill 的解法：把这四件事从大脑里"卸载"到四个独立文件中。
 
 ## 四文件架构
 
-每篇文章是一个文件夹（`YYYY-MM-DD-slug/`），包含六个文件：
+每篇文章是一个文件夹（`YYYY-MM-DD-slug/`），包含七个文件：
 
 | 文件 | 只回答的问题 | 完成的标志 |
 |------|------------|----------|
@@ -27,22 +27,24 @@ Quill 的解法：把这四件事从大脑里"卸载"到四个独立文件中。
 | `audience.md` | 我在对谁说？他读前读后有何不同？ | 读前状态 + 读后状态 |
 | `style.md` | 用什么语气和结构来说？ | 语调、开篇钩子、隐喻、结尾 |
 | `_index.md` | 文章入口与状态 | frontmatter + 完成度 checklist |
-| `draft.md` | 文章正文 | 草稿 |
+| `ai-draft.md` | Agent 的草稿与提议 | 碎片、骨架、起草、修句建议 |
+| `draft.md` | 文章正文（用户写） | 草稿 |
 
 ```
 40-Writing/
 └── 2026-09-20-ai-design-system/
-    ├── _index.md          # 文章入口 + 状态 checklist
-    ├── claim.md           # 核心论点
-    ├── evidence.md        # 证据与逻辑
-    ├── audience.md        # 读者认知状态
-    ├── style.md           # 风格与修辞
-    └── draft.md           # 文章草稿
+    ├── _index.md          # 文章入口 + 状态 checklist（Agent 写）
+    ├── claim.md           # 核心论点（Agent 写）
+    ├── evidence.md        # 证据与逻辑（Agent 写）
+    ├── audience.md        # 读者认知状态（Agent 写）
+    ├── style.md           # 风格与修辞（Agent 写）
+    ├── ai-draft.md        # Agent 的草稿与提议（Agent 写）
+    └── draft.md           # 用户的文章草稿（用户写，Agent 只读）
 ```
 
 ## 十步工作流（全程模型驱动，无脚本）
 
-1. **创建文章项目** — 模型直接创建文件夹与六文件
+1. **创建文章项目** — 模型直接创建文件夹与六个结构文件（`draft.md` 留给用户自建）
 2. **构思引导（结构化提问）** — 用提问工具引导用户定方向 / 定读者 / 定风格（三轮）
 3. **定义核心论点（精修）** — 在预填基础上精修一句话论点 + 支撑要点
 4. **收集证据** — 每条证据可点击核验，画推理链
@@ -50,7 +52,7 @@ Quill 的解法：把这四件事从大脑里"卸载"到四个独立文件中。
 6. **定义风格与修辞** — 语调、钩子、隐喻、结尾
 7. **写作（全流程支持）** — 碎片化写作四步：捡骨头 → 搭建骨架 → 组装完整 → 持续完善
 8. **反驳** — 草稿写完立即找反例反驳（事实/逻辑/范围/价值反例）
-9. **验证** — 模型读取六文件，按 9 项标准判断
+9. **验证** — 模型读取七文件，按 9 项标准判断
 10. **生成写作简报**（可选）— 合并四文件供投稿对齐
 
 所有操作（创建、校验、汇总、反驳）由模型自身读写与判断完成，**不依赖任何脚本**。这与作者知识库 AGENTS.md 的红线一致：禁止脚本批量修改笔记，读取 > 建议 > 手动修改。
@@ -159,9 +161,9 @@ quill/
 │   ├── obsidian-adaptation.md    # Obsidian 适配（frontmatter/双链/Dataview）
 │   └── sspai-format.md           # 少数派首页写作格式规范
 ├── assets/
-│   ├── templates/                # 四文件模板（claim/evidence/audience/style）
+│   ├── templates/                # 五文件模板（claim/evidence/audience/style/ai-draft）
 │   └── examples/
-│       └── sample-article/       # 完整六文件示范
+│       └── sample-article/       # 完整七文件示范
 ├── LICENSE
 ├── README.md
 └── writing-skill-dev-doc.md      # 开发文档

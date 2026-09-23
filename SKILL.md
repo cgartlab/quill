@@ -2,7 +2,7 @@
 name: quill
 description: 结构化长文写作框架。管理文章的核心论点、证据、受众和风格，适配 Obsidian Markdown 工作流。当用户要写博客、通讯、论文或任何非虚构长文、想把零散想法整理成有论点有证据的文章、或已有草稿却理不清主线时使用——只要意图是把想法变成有论点的长文就应激活本 skill。全程不依赖脚本：创建、校验、汇总、反驳均由模型自身读写与判断完成；激活时自动探测当前 harness/agent 环境并适配。不用于小说/诗歌/剧本等虚构创作或邮件/评论/即时消息等短文本。
 metadata:
-  version: "2.6.0"
+  version: "2.7.0"
   date: "2026-09-21"
   reference: "https://github.com/cgartlab/quill"
 ---
@@ -20,6 +20,7 @@ Quill 通过四个文件，把模糊的写作意图转化为可验证、可追�
 - 禁止清单 > 鼓励清单：疲劳与赶稿时，"不做什么"比"做什么"更容易守住。
 - 内容优先 > 格式一致 > 结构完美。
 - 读取 > 建议 > 手动修改：AI 在边界内稳定生产，不替人定价值观、不编来源、不把推测写成事实。
+- 文件边界：Agent 只在自己创建的项目文件夹内读写；其中 `claim` / `evidence` / `audience` / `style` / `_index` / `ai-draft` 由 Agent 读写，`draft.md` 是用户的文章——Agent 只读、绝不修改。Agent 的提议与起草写进 `ai-draft.md`，由用户决定是否采纳进 `draft.md`。
 
 四个文件（claim / evidence / audience / style）即一具"思维标本"的骨架——这与"碎片化写作"（捡骨头 → 搭建骨架 → 组装完整 → 持续完善）是同一件事的不同切面：四文件是资产层，碎片化写作是过程层。
 
@@ -48,8 +49,8 @@ Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harn
 
 1. 在环境探测确定的写作根目录下创建文件夹 `YYYY-MM-DD-<slug>/`（Obsidian Vault 默认 `40-Writing/`，其他环境用当前工作目录）。
 2. 从 `assets/templates/` 读取四个模板，写入 `claim.md`、`evidence.md`、`audience.md`、`style.md`。
-3. 生成 `_index.md`（frontmatter 含 `type: index`、`title`、`slug`、`date`、`created`、`updated`、`description`、`status: draft`、`word-count: 0`、`tags`、`series`，及完成度 checklist）与 `draft.md`（`type: draft`、`status: draft`、`created`、`updated`、`description`，含标题占位）。
-4. 输出文件清单，提示用户进入第二步构思引导。
+3. 生成 `_index.md`（frontmatter 含 `type: index`、`title`、`slug`、`date`、`created`、`updated`、`description`、`status: draft`、`word-count: 0`、`tags`、`series`，及完成度 checklist）与 `ai-draft.md`（`type: ai-draft`、`status: draft`、`created`、`updated`、`description`——Agent 的草稿与提议空间）。
+4. 告知用户：`draft.md` 是你的文章，由你自己创建与写作；Agent 只读不写。输出文件清单，提示用户进入第二步构思引导。
 
 ### 第二步：构思引导（结构化提问）
 
@@ -100,7 +101,7 @@ Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harn
 
 ### 第七步：写作（全流程支持）
 
-读 `references/writing-craft.md`，按碎片化写作四步推进——捡骨头 → 搭建骨架 → 组装完整 → 持续完善。AI 协助收集碎片、提议骨架、起草段落、修句润色、做写作自检；你保留最终写作权，定观点与去留。
+读 `references/writing-craft.md`，按碎片化写作四步推进——捡骨头 → 搭建骨架 → 组装完整 → 持续完善。AI 协助收集碎片、提议骨架、起草段落、修句润色、做写作自检；你保留最终写作权，定观点与去留。Agent 的所有草稿、骨架、提议、修句写进 `ai-draft.md`；读取用户的 `draft.md` 做参照与自检，但绝不修改它——由用户决定是否把 `ai-draft.md` 的内容采纳进 `draft.md`。
 
 > 起草规则：不编来源、不编事实、推测标明、用具体例子、标注需人审核处。
 > 若文章面向少数派（sspai）首页发布，编辑正文前先读 `references/sspai-format.md`，按其格式与标准规范落笔：中英文间加空格、直角引号、标题不跳级、图片宽度语法 `![描述|宽度]`、题图尺寸、链接文本、AI 辅助披露 callout 等。
@@ -116,15 +117,15 @@ Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harn
   - **范围反例**：论点过宽，存在明显不适用场景。
   - **价值反例**：有更重要视角被忽略。
 - 对每条反例做判断：**吸收**（修正论点 / 补边界）、**驳倒**（给出反驳理由）、或**确认破例并标明**。
-- 把反例与处理记回 `claim.md` / `evidence.md`（潜在漏洞、待核查项），必要时回改 `draft.md`。
+- 把反例与处理记回 `claim.md` / `evidence.md`（潜在漏洞、待核查项）；若需改草稿，把修改建议写进 `ai-draft.md` 提示用户，不直接改 `draft.md`。
 
 > 反例按以下优先级寻找：① 本地语料（你的 Obsidian 知识库与本地仓库）② 你已发表的历史文章 ③ 你的 GitHub 仓库 ④ 联网（通用检索）。先在自己的语料里找反例，再向外扩展；不跑脚本。
 
 ### 第九步：验证（模型驱动）
 
-**由你（模型）读取六个文件并按以下标准判断**，不跑脚本、不数字符：
+**由你（模型）读取七个文件并按以下标准判断**，不跑脚本、不数字符（`draft.md` 是用户文件，只读不写）：
 
-- 文件完整性：六文件齐全，缺则列出。
+- 文件完整性：七文件齐全（`draft.md` 由用户创建，可能尚未开始——缺则提示用户），缺则列出。
 - claim 非空：核心论点是一句实在的话，不是占位符。
 - evidence 附链接：至少一条证据带可访问来源。
 - style 已选：至少一种语调已勾选。
@@ -149,23 +150,25 @@ Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harn
   - 不用空泛情绪词（"震撼 / 颠覆 / 史诗级 / 无与伦比 / 颠覆性 / 史无前例"）替代证据。
   - 不用过度包装标题（不加感叹号、不加"震惊 / 必看"、不用纯悬念式；中文标题不超 20 字）。
   - 不写"根据知识库中的相关笔记…"等 AI 占位文本；不写没有具体场景的 AI 式总结开头。
+  - 不修改用户的 `draft.md`——只读不写；你的草稿与提议写 `ai-draft.md`，由用户决定是否采纳。
 
 > 证据标准与证据反模式见 `references/evidence-guide.md`。
 
 ## 目录约定
 
 文章项目位于环境探测确定的写作根目录下，命名格式为 `YYYY-MM-DD-slug`（Obsidian Vault 默认 `40-Writing/`，其他环境用当前工作目录）。
-每篇文章包含 `_index.md`、`claim.md`、`evidence.md`、`audience.md`、`style.md`、`draft.md` 六个文件。
+每篇文章包含七个文件：Agent 读写 `_index.md`、`claim.md`、`evidence.md`、`audience.md`、`style.md`、`ai-draft.md`；用户的 `draft.md` 由用户自己创建与写作，Agent 只读不写。
 
 ```
 40-Writing/
 └── 2026-09-20-ai-design-system/
-    ├── _index.md          # 文章入口 + 状态 checklist
-    ├── claim.md           # 核心论点
-    ├── evidence.md        # 证据与逻辑
-    ├── audience.md        # 读者认知状态
-    ├── style.md           # 风格与修辞
-    └── draft.md           # 文章草稿
+    ├── _index.md          # 文章入口 + 状态 checklist（Agent 写）
+    ├── claim.md           # 核心论点（Agent 写）
+    ├── evidence.md        # 证据与逻辑（Agent 写）
+    ├── audience.md        # 读者认知状态（Agent 写）
+    ├── style.md           # 风格与修辞（Agent 写）
+    ├── ai-draft.md        # Agent 的草稿与提议（Agent 写）
+    └── draft.md           # 用户的文章草稿（用户写，Agent 只读）
 ```
 
 ## 渐进式披露

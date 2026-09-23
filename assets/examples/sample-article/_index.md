@@ -21,7 +21,8 @@ tags:
 - [x] evidence.md 完成
 - [x] audience.md 完成
 - [x] style.md 完成
-- [x] draft.md 初稿
+- [x] ai-draft.md 完成
+- [x] draft.md 初稿（用户写）
 - [ ] 事实核查
 - [ ] 发布
 
