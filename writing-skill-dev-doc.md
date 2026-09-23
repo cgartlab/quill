@@ -70,7 +70,7 @@ quill/
 
 ## 五、模型驱动的校验（替代脚本）
 
-SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件后按以下标准判断，不跑脚本、不数字符（`draft.md` 是用户文件，只读不写）：文件完整性 / claim 非空 / evidence 附链接 / style 已选 / draft 达意 / 真诚 / 写作自检已做 / 反驳已做 / 平台格式（少数派则对 `sspai-format.md` 硬规则）。任一不过回到对应步骤。
+SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件后按以下标准判断，不跑脚本、不数字符（用户的草稿是用户文件，只读不写，文件名不限）：文件完整性 / claim 非空 / evidence 附链接 / style 已选 / draft 达意 / 真诚 / 写作自检已做 / 反驳已做 / 平台格式（少数派则对 `sspai-format.md` 硬规则）。任一不过回到对应步骤。
 
 ## 六、少数派格式规范的融入
 
@@ -115,7 +115,7 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 - 阶段四（done）：草稿反驳规则——写完 draft 后立即由模型找反例反驳草稿（事实/逻辑/范围/价值反例），吸收或驳倒，记回 claim/evidence。是 SKILL.md 第八步的规则，非定期维护任务。
 - 阶段五（done）：写作工艺——references/writing-craft.md 整合碎片化写作四步、文章骨架、句子与声音规则、起草规则、写作自检；SKILL.md 第七步改为全流程写作支持。
 - 阶段六（done）：构思引导——新增 references/conception-guide.md，SKILL.md 第二步用结构化提问工具引导用户定方向 / 定读者 / 定风格（三轮八问），充分利用 DSH / Codex / OpenCode 等 harness 的多选提问功能。
-- 阶段七（done）：文件边界——Agent 只读写自己创建的文件夹；`claim` / `evidence` / `audience` / `style` / `_index` / `ai-draft` 由 Agent 读写，`draft.md` 是用户的文章，Agent 只读绝不修改；Agent 的草稿与提议写 `ai-draft.md`，由用户决定是否采纳。新增 `assets/templates/ai-draft.md` 与示例。
+- 阶段七（done）：文件边界——Agent 只读写自己创建的文件夹；`claim` / `evidence` / `audience` / `style` / `_index` / `ai-draft` 由 Agent 读写，用户的草稿（文件名不限，第一步智能检测是否已有、没有则引导创建）Agent 只读绝不修改；Agent 的草稿与提议写 `ai-draft.md`，由用户决定是否采纳。新增 `assets/templates/ai-draft.md` 与示例。
 
 ## 十二、已知边界
 
@@ -123,7 +123,7 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 - 风格契约与少数派规范需定期对齐官方手册更新（手册更新日期 2026-09-18）。
 - 环境自动探测依赖模型能读到环境信号；信号不足时需用户确认，不默认假设。
 - skill 不判断"这个观点要不要发"——那是创作者的权力。
-- Agent 绝不修改用户的 `draft.md`——只读不写；Agent 的草稿写 `ai-draft.md`，由用户决定是否采纳。
+- Agent 绝不修改用户的草稿——只读不写（文件名不限）；Agent 的草稿写 `ai-draft.md`，由用户决定是否采纳。
 
 
 
