@@ -1,0 +1,81 @@
+{
+  "skill_name": "quill",
+  "note": "结构性 evals：机械可验证的行为（文件结构、frontmatter、只读边界、提问触发、负例不触发）。主观写作质量不在本组断言内。运行方法见 evals/README.md。",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我写一篇关于「AI 与设计师的关系」的文章",
+      "expected_output": "创建七文件项目结构，用结构化提问引导构思，进入核心论点精修",
+      "expectations": [
+        "在写作根目录下创建了形如 YYYY-MM-DD-slug/ 的文章文件夹",
+        "文件夹内创建了 Agent 六文件：_index.md、claim.md、evidence.md、audience.md、style.md、ai-draft.md",
+        "每个文件都带 YAML frontmatter，含 type 与 status 字段",
+        "_index.md 的 frontmatter 含 type: index 与 word-count、title、slug、created、updated、description",
+        "ai-draft.md 的 frontmatter 含 type: ai-draft",
+        "调用了结构化提问工具（DSH 为 ask_user_question）提出文章类型 / 论点方向 / 论证类型三类问题",
+        "没有创建或修改名为 draft.md 的用户草稿"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我的文章项目在 evals/files/existing-draft/40-Writing/2026-09-20-remote-work/，草稿写了一半（文件名是「我的文章.md」，不是 draft.md），帮我理一下主线",
+      "expected_output": "检测到用户草稿，只读不修改，分析写入 ai-draft.md",
+      "files": ["evals/files/existing-draft"],
+      "expectations": [
+        "识别出用户的草稿是「我的文章.md」而非默认的 draft.md",
+        "用户的草稿文件「我的文章.md」内容与初始完全一致（未被修改）",
+        "没有新建 draft.md 或覆盖用户的草稿",
+        "主线的分析与建议写进了 ai-draft.md",
+        "读取了用户草稿作为分析依据（而非凭空分析）"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "帮我写一首关于秋天的诗",
+      "expected_output": "不激活 Quill——虚构创作超出适用范围",
+      "expectations": [
+        "没有创建 Quill 的七文件项目结构",
+        "没有创建 claim.md / evidence.md / audience.md / style.md / ai-draft.md",
+        "直接以写诗回应，或说明 Quill 不适用于虚构创作"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "我想写点关于远程办公效率的东西，但还没想清楚要写什么",
+      "expected_output": "触发结构化提问（三轮），而非直接开写正文",
+      "expectations": [
+        "调用了结构化提问工具（DSH 为 ask_user_question）",
+        "提问包含文章类型选项（观点论述 / 经验分享 / 技术解析 / 趋势分析）",
+        "提问包含 2-4 个具体的核心论点方向候选",
+        "提问包含论证类型选项（事实主张 / 价值主张 / 政策主张）",
+        "至少一个选项被标注为推荐项",
+        "在用户回答提问前，没有写出完整正文"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "帮我写一篇关于「为什么我不用 AI 写初稿」的文章，我的观点是靠 AI 代笔会失去自己的判断力",
+      "expected_output": "claim.md 有一句具体可反驳的论点；evidence.md 至少一条带来源",
+      "expectations": [
+        "claim.md 的核心论点是一句具体、可反驳的话，不是占位符或「浅谈 X」式标题",
+        "claim.md 含 3-5 条支撑要点",
+        "evidence.md 的证据清单至少有一条带来源或链接",
+        "evidence.md 标注了待核查项",
+        "没有编造无法核验的来源或把推测写成事实"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "帮我写一篇面向少数派（sspai）首页的文章，主题是「我用三个月重建了写作流程」",
+      "expected_output": "加载 sspai-format.md，按其硬规则起草",
+      "expectations": [
+        "读取了 references/sspai-format.md",
+        "style.md 的发布平台勾选了少数派",
+        "Agent 起草的内容写在 ai-draft.md（不是用户的草稿）",
+        "起草内容中英文之间加了半角空格",
+        "起草内容使用中文直角引号「」",
+        "起草内容包含 AI 辅助创作披露 callout（> [!NOTE]）"
+      ]
+    }
+  ]
+}

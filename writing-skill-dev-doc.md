@@ -1,6 +1,6 @@
 # Quill Skill 开发文档
 
-**版本**：2.7.0
+**版本**：2.8.0
 **状态**：正式版（模型驱动 + 少数派格式 + 环境自动探测 + 草稿反驳规则 + 反例优先级 + 写作工艺 + 构思引导 + 文件边界）
 **最后更新**：2026-09-21
 
@@ -63,6 +63,10 @@ quill/
 │           ├── style.md
 │           ├── ai-draft.md
 │           └── draft.md
+├── evals/                        # 结构性 evals（新增）
+│   ├── evals.json                # 6 个结构性测试用例（32 条断言）
+│   ├── README.md                 # 运行方法 + skill-creator 工具问题记录
+│   └── files/existing-draft/     # 已有草稿 fixture（文件名无关检测用）
 └── writing-skill-dev-doc.md      # 本文档
 ```
 
@@ -107,7 +111,14 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 - 状态流 idea → draft → in-progress → review → done → archived；位置随生命周期流动。
 - 双链 `[[笔记]]`、脚注 `[^N]` 溯源、概念优先链接原子笔记；`_index.md` 含 `type: index` 供 Dataview 查询。
 
-## 十一、路线图
+## 十一、结构性 evals
+
+- 新增 `evals/evals.json`：6 个结构性测试用例（32 条断言），只断言机械可验证的行为——七文件结构、frontmatter 合规、文件边界（用户草稿只读）、构思提问触发、负例不触发、claim/evidence 质量底线。
+- Eval 2 的 fixture `evals/files/existing-draft/`：预置 Agent 六文件 + 用户草稿 `我的文章.md`（故意不叫 draft.md），验证文件名无关检测与字节级只读。
+- `evals/README.md`：运行方法（skill-creator 的 run_eval.py 依赖 claude CLI，本机无，改用 dsh headless / codex / opencode 执行）+ 本机环境绕过 + skill-creator 工具问题记录。
+- 用官方 `quick_validate.py` 验证：`Skill is valid!`（需 `PYTHONUTF8=1` 绕过其编码 bug）。
+- 范围边界：主观写作质量（论点是否深刻、文笔如何）不作断言，靠人工评审。
+## 十二、路线图
 
 - 阶段一（done）：模型驱动版落地，原架构保留，少数派格式规范融入。
 - 阶段二（用户手动测试）：在 Obsidian + Agent Client 中实测触发与按需加载（由作者本人手动进行）。
@@ -116,14 +127,16 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 - 阶段五（done）：写作工艺——references/writing-craft.md 整合碎片化写作四步、文章骨架、句子与声音规则、起草规则、写作自检；SKILL.md 第七步改为全流程写作支持。
 - 阶段六（done）：构思引导——新增 references/conception-guide.md，SKILL.md 第二步用结构化提问工具引导用户定方向 / 定读者 / 定风格（三轮八问），充分利用 DSH / Codex / OpenCode 等 harness 的多选提问功能。
 - 阶段七（done）：文件边界——Agent 只读写自己创建的文件夹；`claim` / `evidence` / `audience` / `style` / `_index` / `ai-draft` 由 Agent 读写，用户的草稿（文件名不限，第一步智能检测是否已有、没有则引导创建）Agent 只读绝不修改；Agent 的草稿与提议写 `ai-draft.md`，由用户决定是否采纳。新增 `assets/templates/ai-draft.md` 与示例。
+- 阶段八（done）：结构性 evals——新增 `evals/`（6 用例 + fixture + README），断言文件结构、frontmatter、只读边界、提问触发与负例；官方 quick_validate 通过。
 
-## 十二、已知边界
+## 十三、已知边界
 
 - "发布后回看"靠日历提醒，模型替不了。
 - 风格契约与少数派规范需定期对齐官方手册更新（手册更新日期 2026-09-18）。
 - 环境自动探测依赖模型能读到环境信号；信号不足时需用户确认，不默认假设。
 - skill 不判断"这个观点要不要发"——那是创作者的权力。
 - Agent 绝不修改用户的草稿——只读不写（文件名不限）；Agent 的草稿写 `ai-draft.md`，由用户决定是否采纳。
+
 
 
 
