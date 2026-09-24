@@ -1,6 +1,7 @@
 ---
 name: quill
 description: 结构化长文写作框架。管理文章的核心论点、证据、受众和风格，适配 Obsidian Markdown 工作流。当用户要写博客、通讯、论文或任何非虚构长文、想把零散想法整理成有论点有证据的文章、或已有草稿却理不清主线时使用——只要意图是把想法变成有论点的长文就应激活本 skill。全程不依赖脚本：创建、校验、汇总、反驳均由模型自身读写与判断完成；激活时自动探测当前 harness/agent 环境并适配。不用于小说/诗歌/剧本等虚构创作或邮件/评论/即时消息等短文本。
+license: CC-BY-NC-SA-4.0
 metadata:
   version: "2.7.0"
   date: "2026-09-21"
@@ -182,4 +183,5 @@ Quill 不假设运行环境。激活时，先自动探测当前处在哪个 harn
 - `references/obsidian-adaptation.md`：用户使用 Obsidian、或询问与 Obsidian / Dataview / Agent Client 协作时加载。
 - `references/sspai-format.md`：编辑面向少数派首页的正文（第七步）时加载。
 - `references/writing-craft.md`：进入写作阶段（第七步）时加载，承载碎片化写作四步、文章骨架、句子与声音规则、起草规则、写作自检。
+
 
