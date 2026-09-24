@@ -165,6 +165,7 @@ quill/
 │   ├── templates/                # 五文件模板（claim/evidence/audience/style/ai-draft）
 │   └── examples/
 │       └── sample-article/       # 完整七文件示范
+├── evals/                        # 结构性 evals（6 用例 + fixture）
 ├── LICENSE
 ├── README.md
 └── writing-skill-dev-doc.md      # 开发文档
