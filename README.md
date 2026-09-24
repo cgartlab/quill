@@ -91,6 +91,7 @@ Quill 的解法：把这四件事从大脑里"卸载"到四个独立文件中。
    - 全程模型驱动，不跑脚本
    - 不编来源、不编事实、不把推测写成事实、不留 AI 占位文本
    - 不用空泛情绪词（震撼/颠覆/史诗级）替代证据
+   - 不修改用户的草稿——只读不写；你的草稿与提议写 ai-draft.md
    - 你保留最终写作权——定观点、定去留、定声音
 
 装好后回复「Quill 已就绪」即可。
@@ -198,4 +199,5 @@ Quill 遵循"渐进式披露"——Skill 清单（`SKILL.md`）只含核心逻�
 - 写作流程源自 cgartlab.com《碎片写作——建立一具思维标本》
 - 少数派格式规范源自 [少数派创作手册·风格指南](https://manual.sspai.com/rules/manual-of-style/)
 - 架构范式参考 [edic-design-system](https://github.com/cgartlab/edic-design-system)
+
 

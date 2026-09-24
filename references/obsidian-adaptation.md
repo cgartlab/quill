@@ -14,7 +14,7 @@ Dataview / Bases 插件可直接读取这些字段做查询。建议在 Obsidian
 
 ## 链接规范
 
-- 文章内部文件互链：`[[claim]]`、`[[evidence]]`、`[[audience]]`、`[[style]]`（同目录短名即可）
+- 文章内部文件互链：`[[claim]]`、`[[evidence]]`、`[[audience]]`、`[[style]]`、`[[ai-draft]]`、`[[_index]]`（同目录短名即可）
 - 与 Vault 内其他笔记关联：`[[笔记标题]]`
 - 精确到标题 / 段落：`[[笔记#标题]]`、`[[笔记^block-id]]`
 - 外部链接：`[文字](url)`
@@ -38,4 +38,5 @@ Quill 用 `_index.md`（`_` 前缀保证在文件夹中排在最顶部）作为�
 
 Obsidian 的 Agent Client 插件通过 ACP 协议连接本地 AI Agent。
 Quill 作为标准 Skill 安装在 Agent 的 skills 目录后，可在 Agent Client 中直接被调用——用户在 Obsidian 里说"帮我建一篇关于 X 的文章"，Agent 即触发 Quill 的创建流程（由模型直接写文件，不跑脚本）。
+
 
