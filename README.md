@@ -82,7 +82,7 @@ Quill 的解法：把这四件事从大脑里"卸载"到四个独立文件中。
    若 ~/.cc-switch/ 存在（CC Switch 托管），源放 ~/.cc-switch/skills/quill/
 
 3. 读取 quill/SKILL.md，将其注册为可用 skill。
-   触发条件：用户要写博客、通讯、论文或任何非虚构长文；或想把零散想法整理成有论点有证据的文章；或已有草稿但理不清主线。
+   触发条件：用户要写博客、通讯、论文、专栏或任何非虚构长文；或想把零散想法整理成有论点有证据的文章；或已有草稿但理不清主线。只要意图是把想法变成有论点的长文就应激活，即使用户没明说"写文章"。
 
 4. 激活后先做环境探测（读 SKILL.md「环境自动探测与适配」段），
    用一句话告诉我检测到的环境与适配方式，然后等待我的写作意图。
@@ -200,6 +200,7 @@ Quill 遵循"渐进式披露"——Skill 清单（`SKILL.md`）只含核心逻�
 - 写作流程源自 cgartlab.com《碎片写作——建立一具思维标本》
 - 少数派格式规范源自 [少数派创作手册·风格指南](https://manual.sspai.com/rules/manual-of-style/)
 - 架构范式参考 [edic-design-system](https://github.com/cgartlab/edic-design-system)
+
 
 
 
