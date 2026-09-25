@@ -23,7 +23,7 @@ Quill 的解法：把这四件事从大脑里"卸载"到四个独立文件中。
 | 文件 | 只回答的问题 | 完成的标志 |
 |------|------------|----------|
 | `claim.md` | 这篇文章最想传递什么？ | 一句话核心论点 + 3-5 条支撑要点 |
-| `evidence.md` | 我凭什么这么说？ | 每条证据有来源、可信度、链接 |
+| `evidence.md` | 我凭什么这么说？ | 材料清点满五件 + 每条有来源、身份、可信度、链接 |
 | `audience.md` | 我在对谁说？他读前读后有何不同？ | 读前状态 + 读后状态 |
 | `style.md` | 用什么语气和结构来说？ | 语调、开篇钩子、隐喻、结尾 |
 | `_index.md` | 文章入口与状态 | frontmatter + 完成度 checklist |
@@ -53,7 +53,7 @@ Quill 的解法：把这四件事从大脑里"卸载"到四个独立文件中。
 7. **定义风格与修辞** — 语调、钩子、隐喻、结尾
 8. **写作（全流程支持）** — 碎片化写作四步：捡骨头 → 搭建骨架 → 组装完整 → 持续完善；含句子级规则（主干/连词/名词化/长短句/接话/知识按需）与六遍改稿框架
 9. **反驳** — 草稿写完立即找反例反驳（事实/逻辑/范围/价值反例）
-10. **验证** — 模型读取七文件，按 9 项标准判断
+10. **验证** — 模型读取七文件，按 SKILL.md 第九步验证清单逐项判断
 11. **生成写作简报**（可选）— 合并四文件供投稿对齐
 
 所有操作（创建、校验、汇总、反驳）由模型自身读写与判断完成，**不依赖任何脚本**。这与作者知识库 AGENTS.md 的红线一致：禁止脚本批量修改笔记，读取 > 建议 > 手动修改。
@@ -158,8 +158,9 @@ quill/
 │   ├── environment-detection.md  # 环境自动探测与适配
 │   ├── conception-guide.md       # 构思引导：三轮结构化提问
 │   ├── framework.md              # 四文件架构说明
-│   ├── evidence-guide.md         # 证据收集指南 + 证据反模式
-│   ├── writing-craft.md          # 写作工艺：碎片化四步 + 文章骨架 + 句子级规则 + 起草规则 + 六遍改稿 + 写作自检
+│   ├── evidence-guide.md         # 证据收集 + 材料身份五分法 + 用户经历边界 + 正文归属
+│   ├── form-guide.md             # 形式分流：按文章类型给出开篇/推进/结尾要点
+│   ├── writing-craft.md          # 写作工艺：碎片化四步 + 文章骨架 + 句子级规则 + 篇章推进 + 起草规则 + 六遍改稿 + 写作自检
 │   ├── obsidian-adaptation.md    # Obsidian 适配（frontmatter/双链/Dataview）
 │   └── sspai-format.md           # 少数派首页写作格式规范
 ├── assets/
@@ -180,6 +181,7 @@ Quill 遵循"渐进式披露"——Skill 清单（`SKILL.md`）只含核心逻�
 - 构思引导 → `references/conception-guide.md`
 - 问架构 → `references/framework.md`
 - 收证据 → `references/evidence-guide.md`
+- 定形式 → `references/form-guide.md`
 - 进写作 → `references/writing-craft.md`
 - 用 Obsidian → `references/obsidian-adaptation.md`
 - 发少数派 → `references/sspai-format.md`
@@ -201,6 +203,7 @@ Quill 遵循"渐进式披露"——Skill 清单（`SKILL.md`）只含核心逻�
 - 写作流程源自 cgartlab.com《碎片写作——建立一具思维标本》
 - 少数派格式规范源自 [少数派创作手册·风格指南](https://manual.sspai.com/rules/manual-of-style/)
 - 架构范式参考 [edic-design-system](https://github.com/cgartlab/edic-design-system)
+- 材料门槛、材料身份、句子级规则、形式分流与禁用清单的设计参考 [human-writing](https://github.com/cgartlab/human-writing)（活人感写作，MIT）——已按 Quill 的四文件架构与模型驱动原则重写，非直接搬运
 
 
 
