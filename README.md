@@ -160,7 +160,7 @@ quill/
 │   ├── framework.md              # 四文件架构说明
 │   ├── evidence-guide.md         # 证据收集 + 材料身份五分法 + 用户经历边界 + 正文归属
 │   ├── form-guide.md             # 形式分流：按文章类型给出开篇/推进/结尾要点
-│   ├── writing-craft.md          # 写作工艺：碎片化四步 + 文章骨架 + 句子级规则 + 篇章推进 + 起草规则 + 六遍改稿 + 写作自检
+│   ├── writing-craft.md          # 写作工艺：碎片化四步 + 文章骨架 + 句子级规则 + 篇章推进 + 判断边界 + 起草规则 + 六遍改稿 + 冷读 + 可量化自检
 │   ├── obsidian-adaptation.md    # Obsidian 适配（frontmatter/双链/Dataview）
 │   └── sspai-format.md           # 少数派首页写作格式规范
 ├── assets/
