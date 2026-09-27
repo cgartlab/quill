@@ -4,7 +4,7 @@
 
 **Quill** 装进你的 Agent，把长文写作拆成四个可检查的文件。它按自己的理解写出一篇完整草稿放在 `ai-draft.md`，**你的文章它只读不写**。
 
-适配 DSH、Claude Code、Codex、OpenCode、Obsidian Agent Client。当前版本 0.1.0，开发中（见 [CHANGELOG.md](./CHANGELOG.md)）。
+适配 DSH、Claude Code、Codex、OpenCode、Obsidian Agent Client。当前版本 0.2.0，开发中（见 [CHANGELOG.md](./CHANGELOG.md)）。
 
 **许可非商用。** 商业用途请先联系作者。
 
