@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/logo-inverse.svg">
+    <img src="./assets/logo.svg" alt="Quill" width="128">
+  </picture>
+</p>
+
 # Quill
 
 > 结构为骨，自由为魂，真诚为血，高信噪比为气。
@@ -140,8 +147,9 @@ quill/
 │   ├── obsidian-adaptation.md    # Obsidian 适配
 │   └── sspai-format.md           # 少数派首页格式
 ├── assets/
-│   ├── logo.svg                  # 站点图标
-│   ├── logo-tile.svg             # 平铺底图
+│   ├── logo.svg                  # 标志（黑，浅色底）
+│   ├── logo-inverse.svg          # 标志反白（深色底）
+│   ├── logo-tile.svg             # 圆角图标版
 │   ├── templates/                # 5 个模板
 │   └── examples/sample-article/  # 完整七文件示范
 ├── evals/                        # 7 条结构性用例 + fixture
