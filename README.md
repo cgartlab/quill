@@ -10,6 +10,15 @@
 
 ---
 
+## 设计理念
+
+- **结构为骨**：四文件是思维标本的骨架
+- **自由为魂**：骨架之上，写作是即兴的
+- **真诚为血**：不编来源、不把推测写成事实、不替你定稿
+- **高信噪比为气**：短句优先、具体例子、少空泛形容词
+
+---
+
 ## 安装
 
 ### 最快：把这段发给 Agent
@@ -141,14 +150,7 @@ quill/
 
 渐进式披露：`SKILL.md` 只放核心逻辑，参考文档用到才加载。
 
----
 
-## 设计理念
-
-- **结构为骨**：四文件是思维标本的骨架
-- **自由为魂**：骨架之上，写作是即兴的
-- **真诚为血**：不编来源、不把推测写成事实、不替你定稿
-- **高信噪比为气**：短句优先、具体例子、少空泛形容词
 
 ---
 
@@ -156,6 +158,17 @@ quill/
 
 [CC BY-NC-SA 4.0](./LICENSE)
 
-## 致谢
+## 参考
 
-风格与价值观来自 cgartlab-obsidian 知识库的 AGENTS.md 与创作风格契约。写作流程来自 cgartlab.com《碎片写作——建立一具思维标本》。少数派格式来自[少数派创作手册](https://manual.sspai.com/rules/manual-of-style/)。材料门槛、材料身份、句子级规则、形式分流的设计参考 [human-writing](https://github.com/cgartlab/human-writing)（MIT），已按四文件架构重写。
+| 主题 | 来源 | 许可 |
+|------|------|------|
+| Agent Skills 格式规范 | [agentskills.io](https://agentskills.io) · [规范全文](https://agentskills.io/specification) · [规范仓库](https://github.com/agentskills/agentskills) | 开放标准 |
+| 风格与价值观（AGENTS.md、创作风格契约） | [cgartlab-obsidian](https://github.com/cgartlab/cgartlab-obsidian) | 私有 |
+| 写作流程（碎片化四步的出处） | 《[碎片写作——建立一具思维标本](https://cgartlab.com/posts/fragmented-writing/)》 | CC BY-NC-SA 4.0 |
+| 少数派首页写作格式 | [少数派创作手册·风格指南](https://manual.sspai.com/rules/manual-of-style/) | — |
+| 材料门槛、材料身份、句子级规则、形式分流 | [human-writing](https://github.com/cgartlab/human-writing)（活人感写作） | MIT |
+| Skill 目录结构范式 | [edic-design-system](https://github.com/cgartlab/edic-design-system) | — |
+| CC Switch（多 harness 分发） | [farion1231/cc-switch](https://github.com/farion1231/cc-switch) | — |
+| 本 skill 的开发与评测框架 | [DeepSeek](https://github.com/deepseek-ai) · skill-creator | — |
+
+`human-writing` 的规则已按 Quill 的四文件架构与模型驱动原则重写，非直接搬运。
