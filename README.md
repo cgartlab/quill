@@ -4,7 +4,7 @@
 
 **Quill** 装进你的 Agent，把长文写作拆成四个可检查的文件。它按自己的理解写出一篇完整草稿放在 `ai-draft.md`，**你的文章它只读不写**。
 
-适配 DSH、Claude Code、Codex、OpenCode、Obsidian Agent Client。当前版本 0.1.0，开发中。
+适配 DSH、Claude Code、Codex、OpenCode、Obsidian Agent Client。当前版本 0.1.0，开发中（见 [CHANGELOG.md](./CHANGELOG.md)）。
 
 **许可非商用。** 商业用途请先联系作者。
 
@@ -140,15 +140,45 @@ quill/
 │   ├── obsidian-adaptation.md    # Obsidian 适配
 │   └── sspai-format.md           # 少数派首页格式
 ├── assets/
+│   ├── logo.svg                  # 站点图标
+│   ├── logo-tile.svg             # 平铺底图
 │   ├── templates/                # 5 个模板
 │   └── examples/sample-article/  # 完整七文件示范
 ├── evals/                        # 7 条结构性用例 + fixture
-├── writing-skill-dev-doc.md      # 开发文档（含发版流程）
 ├── LICENSE
 └── README.md
 ```
 
 渐进式披露：`SKILL.md` 只放核心逻辑，参考文档用到才加载。
+
+---
+
+## 发版
+
+版本号记在 `SKILL.md` 的 `metadata.version`。`0.x` 表示尚未稳定，破坏性变更是常事。
+
+改版本时同步三处，缺一即漂移：
+
+1. `SKILL.md` 的 `metadata.version`
+2. 本文件的顶部说明
+3. `CHANGELOG.md` 顶部新增条目
+
+```powershell
+$a = (Select-String -Path SKILL.md -Pattern 'version:').Line -replace '.*"(.*)".*','$1'
+$b = (Select-String -Path CHANGELOG.md -Pattern '^## \[(\d+\.\d+\.\d+)\]').Matches[0].Groups[1].Value
+if ($a -eq $b) { "OK  $a" } else { "MISMATCH  SKILL=$a  CHANGELOG=$b" }
+```
+
+```powershell
+git add -A
+git commit -m "feat: v<版本> — <这版改了什么>"
+git tag -a v<版本> -m "v<版本>"
+git push origin main --follow-tags
+# Release 说明用 --notes-file 读 CHANGELOG 片段，避免引号被转义
+gh release create v<版本> --title "v<版本>" --notes-file <片段文件>
+```
+
+> 从 0.1.0 起打 tag。此前曾用 2.x 编号的迭代没有 tag，那套编号不作为版本记录，需要回溯用 `git log`。
 
 
 
