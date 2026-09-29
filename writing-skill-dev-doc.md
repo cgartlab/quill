@@ -29,6 +29,7 @@ Quill 是 CGArtLab 的个人长文写作 Skill：以「结构为骨，自由为�
 
 ## 三、调研依据（价值观与风格）
 
+- Agent Skills 格式规范（[agentskills.io](https://agentskills.io) · [规范全文](https://agentskills.io/specification) · [规范仓库](https://github.com/agentskills/agentskills)）：`SKILL.md` frontmatter 与渐进式披露（`references/` 按需加载）的格式依据；Quill 只用规范与 harness 实现的字段交集（`name` / `description` / `license` / `metadata`）。
 - 知识库 `D:\2-Area\github-repos\cgartlab-obsidian`：AGENTS.md（PARA / 原子笔记 / Agent 边界 / 红线）、`01-项目/创作风格契约.md`、`编辑风格系统.md`、`把发布检查做成写作工作流里的 skill.md`、`01-项目/少数派/我的上帝模式….md`（少数派实战格式）。
 - 主站 cgartlab.com：《碎片写作——建立一具思维标本》确认发表态声音与四步流程、签名收束、反 AI 误述姿态。
 - 少数派创作手册·风格指南（https://manual.sspai.com/rules/manual-of-style/）：正文格式与标准规范的权威来源，已蒸馏为 `references/sspai-format.md`。
@@ -123,7 +124,7 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 
 - 新增 `evals/evals.json`：7 个结构性测试用例（38 条断言），只断言机械可验证的行为——七文件结构、frontmatter 合规、文件边界（用户草稿只读）、构思提问触发、负例不触发、claim/evidence 质量底线。
 - Eval 2 的 fixture `evals/files/existing-draft/`：预置 Agent 六文件 + 用户草稿 `我的文章.md`（故意不叫 draft.md），验证文件名无关检测与字节级只读。
-- `evals/README.md`：运行方法（skill-creator 的 run_eval.py 依赖 claude CLI，本机无，改用 dsh headless / codex / opencode 执行）+ 本机环境绕过 + skill-creator 工具问题记录。
+- `evals/README.md`：运行方法（[skill-creator](https://github.com/deepseek-ai) 的 run_eval.py 依赖 claude CLI，本机无，改用 dsh headless / codex / opencode 执行）+ 本机环境绕过 + skill-creator 工具问题记录。
 - 用官方 `quick_validate.py` 验证：`Skill is valid!`（需 `PYTHONUTF8=1` 绕过其编码 bug）。
 - 范围边界：主观写作质量（论点是否深刻、文笔如何）不作断言，靠人工评审。
 ## 十二、路线图
