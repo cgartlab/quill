@@ -1,14 +1,14 @@
 # Quill Skill 开发文档
 
-**版本**：0.1.0
-**状态**：0.x 开发中（模型驱动 + 少数派格式 + 环境自动探测 + 文件边界 + 材料门槛 + 材料身份 + 完整草稿 + 写作工艺 + 形式分流 + 硬规则）。流程与文件约定尚未稳定，破坏性变更是常事。
-**最后更新**：2026-09-21
+**版本**：0.4.0
+**状态**：0.x 开发中（模型驱动 + 少数派格式 + 环境自动探测 + 文件边界 + 材料门槛 + 材料身份 + 完整草稿 + 写作工艺 + 形式分流 + 硬规则 + 禁令后置与分档）。流程与文件约定尚未稳定，破坏性变更是常事。
+**最后更新**：2026-09-28
 
 ---
 
 ## 一、项目概述
 
-Quill 是 CGArtLab 的个人长文写作 Skill：以「结构为骨，自由为魂，真诚为血，高信噪比为气」为纲，通过四个文件（核心论点 / 证据 / 受众 / 风格）把模糊的写作意图转化为可验证、可追溯的结构化数据，适配 Obsidian Markdown 工作流，并融入少数派首页的写作格式与标准规范。激活时自动探测当前 harness/agent 环境并适配；草稿写完后立即由模型找反例反驳草稿。
+Quill 是 CGArtLab 的个人长文写作 Skill：以「结构为骨，自由为魂，真诚为血，信噪比为气」为纲，通过四个文件（核心论点 / 证据 / 受众 / 风格）把模糊的写作意图转化为可验证、可追溯的结构化数据，适配任何 Agent 应用（含 Obsidian Markdown 工作流），并融入少数派首页的写作格式与标准规范。激活时自动探测当前 harness/agent 环境并适配；草稿写完后立即由模型找反例反驳草稿。
 
 **核心定位**：写作判断层，不是写作工具。替人挡低级错误、维持风格一致性、把事实与推测分开；定价值观、定观点、定去留的权力始终留给创作者。
 
@@ -32,6 +32,7 @@ Quill 是 CGArtLab 的个人长文写作 Skill：以「结构为骨，自由为�
 - 知识库 `D:\2-Area\github-repos\cgartlab-obsidian`：AGENTS.md（PARA / 原子笔记 / Agent 边界 / 红线）、`01-项目/创作风格契约.md`、`编辑风格系统.md`、`把发布检查做成写作工作流里的 skill.md`、`01-项目/少数派/我的上帝模式….md`（少数派实战格式）。
 - 主站 cgartlab.com：《碎片写作——建立一具思维标本》确认发表态声音与四步流程、签名收束、反 AI 误述姿态。
 - 少数派创作手册·风格指南（https://manual.sspai.com/rules/manual-of-style/）：正文格式与标准规范的权威来源，已蒸馏为 `references/sspai-format.md`。
+- 活人感写作 `human-writing`（[cgartlab/human-writing](https://github.com/cgartlab/human-writing)，上游 KKKKhazix/human-writing v1.1.0，MIT）：材料门槛、材料身份五分法、句子级规则、多遍改稿与冷读、形式分流、可量化自检的判据来源。已按 Quill 的四文件架构与模型驱动原则重写，非直接搬运；其只读检查脚本未采纳（Quill 坚持无脚本）。
 - 既有 skill：`edic-design-system`（结构范式：SKILL.md + references 全大写概念文件 + 按需加载 + 模型自检清单）；`creative-write`（已不存在，motto 由 Quill 继承）。
 
 ## 四、Skill 包结构（保留原架构，无 scripts/）
@@ -39,35 +40,41 @@ Quill 是 CGArtLab 的个人长文写作 Skill：以「结构为骨，自由为�
 ```
 quill/
 ├── SKILL.md                      # manifest + 工作流 + 环境自动探测 + 硬规则
-├── references/
+├── CHANGELOG.md                  # 版本变更（面向使用者）
+├── references/                   # 8 份按需加载的参考
 │   ├── environment-detection.md  # 环境自动探测与适配
-│   ├── conception-guide.md     # 构思引导：三轮结构化提问（新增）
+│   ├── conception-guide.md       # 构思引导：三轮提问 + 说话位置五问
 │   ├── framework.md              # 四文件架构（标注模型驱动）
-│   ├── evidence-guide.md         # 证据收集 + 材料身份五分法 + 用户经历边界 + 正文归属 + 检索痕迹
-│   ├── form-guide.md             # 形式分流：按文章类型给出开篇/推进/结尾要点（新增）
+│   ├── evidence-guide.md         # 材料身份五分法 + 用户经历边界 + 正文归属 + 检索痕迹
+│   ├── form-guide.md             # 形式分流：11 种文体的开篇·推进·结尾·常见错误
 │   ├── obsidian-adaptation.md    # Obsidian 适配
-│   ├── sspai-format.md           # 少数派首页写作格式规范（新增）
-│   └── writing-craft.md          # 写作工艺：碎片化四步 + 骨架 + 句子级规则 + 篇章推进 + 判断边界 + 起草规则 + 六遍改稿 + 冷读 + 自检
+│   ├── sspai-format.md           # 少数派首页写作格式
+│   └── writing-craft.md          # 论点深度 / 声音校准 / 结构接缝 + 句子级规则 + 六遍改稿 + 冷读
 ├── assets/
-│   ├── templates/
+│   ├── logo.svg                  # 标志（黑，浅色底）
+│   ├── logo-inverse.svg          # 标志反白（深色底）
+│   ├── logo-tile.svg             # 圆角图标版
+│   ├── templates/                # 5 个模板
 │   │   ├── claim.md              # 核心论点
 │   │   ├── evidence.md           # 证据与逻辑
 │   │   ├── audience.md           # 读者认知状态
-│   │   ├── style.md              # 风格与修辞（增富：纲领/声音/禁用清单/发布平台勾选）
-│   │   └── ai-draft.md           # Agent 草稿与提议（新增）
-│   └── examples/
-│       └── sample-article/       # 七文件示范
-│           ├── _index.md
-│           ├── claim.md
-│           ├── evidence.md
-│           ├── audience.md
-│           ├── style.md
-│           ├── ai-draft.md
-│           └── draft.md
-├── evals/                        # 结构性 evals（新增）
-│   ├── evals.json                # 6 个结构性测试用例（32 条断言）
+│   │   ├── style.md              # 风格与修辞（纲领/声音/禁用清单/发布平台勾选）
+│   │   └── ai-draft.md           # Agent 的完整草稿
+│   └── examples/sample-article/  # 完整七文件示范
+│       ├── _index.md
+│       ├── claim.md
+│       ├── evidence.md
+│       ├── audience.md
+│       ├── style.md
+│       ├── ai-draft.md
+│       └── draft.md
+├── docs/research/                # 设计依据（logo SVG 生成调研）
+├── evals/                        # 结构性 evals
+│   ├── evals.json                # 7 个结构性测试用例（38 条断言）
 │   ├── README.md                 # 运行方法 + skill-creator 工具问题记录
 │   └── files/existing-draft/     # 已有草稿 fixture（文件名无关检测用）
+├── LICENSE                       # CC BY-NC-SA 4.0
+├── README.md                     # 面向使用者的说明
 └── writing-skill-dev-doc.md      # 本文档
 ```
 
@@ -114,7 +121,7 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 
 ## 十一、结构性 evals
 
-- 新增 `evals/evals.json`：6 个结构性测试用例（32 条断言），只断言机械可验证的行为——七文件结构、frontmatter 合规、文件边界（用户草稿只读）、构思提问触发、负例不触发、claim/evidence 质量底线。
+- 新增 `evals/evals.json`：7 个结构性测试用例（38 条断言），只断言机械可验证的行为——七文件结构、frontmatter 合规、文件边界（用户草稿只读）、构思提问触发、负例不触发、claim/evidence 质量底线。
 - Eval 2 的 fixture `evals/files/existing-draft/`：预置 Agent 六文件 + 用户草稿 `我的文章.md`（故意不叫 draft.md），验证文件名无关检测与字节级只读。
 - `evals/README.md`：运行方法（skill-creator 的 run_eval.py 依赖 claude CLI，本机无，改用 dsh headless / codex / opencode 执行）+ 本机环境绕过 + skill-creator 工具问题记录。
 - 用官方 `quick_validate.py` 验证：`Skill is valid!`（需 `PYTHONUTF8=1` 绕过其编码 bug）。
@@ -130,8 +137,8 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 - 阶段七（done）：文件边界——Agent 只读写自己创建的文件夹；`claim` / `evidence` / `audience` / `style` / `_index` / `ai-draft` 由 Agent 读写，用户的草稿（文件名不限，第一步智能检测是否已有、没有则引导创建）Agent 只读绝不修改；Agent 的草稿与提议写 `ai-draft.md`，由用户决定是否采纳。新增 `assets/templates/ai-draft.md` 与示例。
 - 阶段八（done）：结构性 evals——新增 `evals/`（7 用例 + fixture + README），断言文件结构、frontmatter、只读边界、提问触发、负例与最小性；官方 quick_validate 通过。
 - 阶段九（done）：写作质量（最小优先）——针对「AI 产出偏长、用户要自己删减」的反馈，反转起草默认：默认交最短版本、逐句删除测试、长度预算（段 ≤5 句）、填充词禁令、禁止自加总结段；`先砍后修` 纳入持续完善；写作自检加「可删性」项。eval 7 机械核验。
-- 阶段十一（done）：skill 自身工程质量——消除重复与补鲁棒性缺口，见「十三、skill 工程质量」节。
 - 阶段十（done）：写作质量（深度 / 声音 / 接缝）——针对「论点浅、声音不像我、结构接缝」三项反馈，`writing-craft.md` 新增三套可执行测试：**论点深度**六道测试（已知 / 机制 / 主流 / 推论 / 具体 / 换框）、**声音校准**（读作者 3–5 篇旧文提取声音指纹：句长 / 段长 / 人称 / 句式 / 节奏 / 惯用词 / 开头习惯，起草时对照 + 并排测试）、**结构接缝**六条判据（合并 / 独立 / 顺序 / 承接 / 层级 / 一节一主张）。SKILL.md 第三步加深度测试、第七步加声音指纹与接缝判据、硬规则加「反浅 / 像作者 / 接缝」三条。
+- 阶段十一（done）：skill 自身工程质量——消除重复与补鲁棒性缺口，见「十三、skill 工程质量」节。
 - 阶段十二（done）：吸收活人感写作（第一轮）——新增**材料门槛**（五件材料规则 + 研究/追问/缩短三种兜底，SKILL.md 第一步半 + `evidence.md` 材料清点区）、**句子级规则**十条、**多遍改稿框架**、**扩展禁用清单**（翻案腔 / 同构排比 / 抽象抒情 / 名词化 / 破折号 / 提示性冒号 / 商业黑话 / 模型路标 / 借喻包装）、**说话位置五问**（conception-guide.md）。
 - 阶段十三（done）：吸收活人感写作（第二轮，深入）——① **材料身份五分法**（①可靠事实 ②机构自述 ③旁人回忆 ④作者推断 ⑤未知）与"身份决定怎么写进正文、可信度决定能不能进支撑链"两条轴，`evidence-guide.md` + `evidence.md` 模板双轴列；② **用户经历不能代写**（"看见"≠"试过"，最多问三句）；③ **正文归属与检索痕迹**（②③类首次交代归属、未知只交代一次、核验笔记不接管正文、纯公开材料时开头留一处检索痕迹）；④ **形式分流**新增 `references/form-guide.md`（十一种形式的开篇·推进·结尾·常见错误），让第二步 Q1 的类型有下游规则；⑤ 改稿第三遍补**假深刻 / 假具体 / 假口语 / 抽象名词 / 比喻换场**五类圈法，末尾加**冷读五问**；⑥ `writing-craft.md` 新增**篇章推进**（局部问题表）与**判断要带着来路与边界**；⑦ SKILL.md 新增**规则冲突优先级**（五级）与**交付规范**；⑧ 第九步验证清单从 9 项扩到 13 项。
 - 阶段十四（done）：吸收活人感写作（第三轮，检测逻辑）——把其 `check_prose.py` 的**检测逻辑**改写为模型目测的「可量化自检」表（句长太齐 / 连词太多 / 长前置成分 / 重定语句 / 段落开场重复 / 段落过度单一 / 连续短促单句段 / 借喻聚集 / 金句过密 / 洞察路标超量），每项给出判据与动作；明确「只发现形状，不判断有没有人」且文体可覆盖。另补 `forum-prose.md` 的**写给眼前这个读者**（向读者说话靠解释顺序，不靠称呼）与**幽默来自降格**（落差写出来就够，笑点落下不停下来解释）。Quill 坚持无脚本，故只吸收判据不引入脚本。
@@ -166,7 +173,7 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 
 - 声音校准在取不到作者语料时（离线 / 本地无语料）必须**明说"这版会比较通用"**，不得假装有指纹、不得静默退回通用 AI 腔；可让用户粘贴 2–3 句旧句当样本。
 
-**成本**（字符数，≈token 代理）：`SKILL.md` 7528（常驻）；references 合计约 15.3K（按需）；典型写作 session 约 18.7K。
+**成本**（字符数，≈token 代理）：`SKILL.md` 12553（常驻）；references 合计 31089（按需全载）；走完十步的典型 session 约 38.3K（常驻 + 激活探测 + 构思 + 证据 + 形式 + 工艺），面向少数派再加 `sspai-format.md` 约 41.0K。
 ## 十四、已知边界
 
 - "发布后回看"靠日历提醒，模型替不了。
@@ -180,7 +187,7 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 
 ## 十五、发版流程
 
-手动发版，不跑脚本。四个动作，缺一不可。
+手动发版，不跑脚本。五个动作，缺一不可。
 
 ### 1. 改版本号（两处，必须同步）
 
@@ -217,6 +224,13 @@ git push origin main --follow-tags
 ```
 
 打 tag 前确认工作区干净、版本自检通过。
+
+### 5. 发布 GitHub Release
+
+```powershell
+# 用 --notes-file 读 CHANGELOG 片段，避免引号在命令行里被转义
+gh release create v<版本> --title "v<版本>" --notes-file <片段文件>
+```
 
 ### 装成 skill 之后
 
