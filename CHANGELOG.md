@@ -8,6 +8,45 @@
 
 ---
 
+## [0.4.1] - 2026-09-30
+
+**文档归位：README 瘦身、纲领统一、示例修正。**
+
+### 对你有什么影响
+
+- README 精简为面向使用者的说明：删掉手动装 / 它做什么 / 发版三节，harness 列表改为「适配任何 Agent 应用」，目录树用通用 `Your Project/` 示例
+- 纲领统一为「信噪比为气」（与「结构为骨 / 自由为魂 / 真诚为血」字数对仗）；README、SKILL.md、references、模板、示例、eval fixture 全部一致
+- 示例文章的 `style.md` 三处章节标题与模板对齐——之前简写会丢失括号里的规范意图（稳定偏好 / 比鼓励清单更易守住 / 按需加载格式规范）
+- `style.md` 模板的破折号 / 冒号禁令与 SKILL.md 的「按作者基线」规则对齐——之前模板写成绝对禁令，会教模型过度改稿
+
+### 修复
+
+- **示例标题漂移**（#1）：`assets/examples/sample-article/style.md` 的 `## 声音` / `## 禁用清单` / `## 发布平台` 三处补全为模板的完整带括号标题
+
+### 调整
+
+- **CHANGELOG 改写**为面向使用者的更新日志格式：一句话 → 对你有什么影响 → 分类条目 → 技术细节（折叠）
+- **开发文档与 README 对齐**：版本同步、eval 数量修正（6→7 用例 / 32→38 断言）、包结构树补齐、调研依据补 human-writing 与 agentskills.io、成本字符数重算、路线图阶段顺序、发版流程补 `gh release` 步骤
+- SVG 生成调研移入 `docs/research/`，根目录保持干净
+
+<details>
+<summary>技术细节：本次发版范围</summary>
+
+自 0.4.0（d1dcf1d）以来 main 上的提交：
+
+| 提交 | 说明 |
+|---|---|
+| c50aa13 | CHANGELOG 改写为面向使用者的更新日志 |
+| 7e6fe44 | 按新 README 同步核心项目文档 |
+| a0dfe18 | 调研依据与 README 参考表对齐 |
+| 906a9c2 | 示例 style.md 章节标题与模板对齐（#1，经 PR #2 合并） |
+
+无写作行为变更：SKILL.md 的工作流、硬规则、文件边界均未动（仅纲领标语与目录约定示例随 README 同步）；`quick_validate.py` 通过。
+
+</details>
+
+---
+
 ## [0.4.0] - 2026-09-28
 
 **让 Agent 先写完，再开始挑毛病。**
@@ -233,3 +272,4 @@
 [0.2.0]: https://github.com/cgartlab/quill/releases/tag/v0.2.0
 [0.3.0]: https://github.com/cgartlab/quill/releases/tag/v0.3.0
 [0.4.0]: https://github.com/cgartlab/quill/releases/tag/v0.4.0
+[0.4.1]: https://github.com/cgartlab/quill/releases/tag/v0.4.1
