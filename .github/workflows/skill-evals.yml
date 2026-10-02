@@ -1,0 +1,92 @@
+name: skill evals
+
+# 花钱的那道闸门：真的把 agent 跑起来，量两件事——
+#   1) 机械断言过没过（check-workspace.mjs）
+#   2) 有没有 skill 到底比没有强（Skill Lift = 带 skill 的通过率 − 不带 skill 的通过率）
+#
+# 为什么非要跑「不带 skill」的那条腿：arxiv.org/abs/2608.20614（ACES）在 947 组配对样本里
+# 发现，平均 Skill Lift 只有 0.2134，且只有 72.8% 的 skill 为正 —— 也就是说约四分之一的
+# skill 对最终产物没有贡献甚至有害。只跑带 skill 的那条腿，永远发现不了这件事。
+#
+# 成本：每条 eval 每个 trial 都是一次真实模型调用。默认只跑子集，schedule 那条走全量。
+#
+# 需要 secret：ANTHROPIC_API_KEY（或 CODEX_API_KEY，视 runner 而定）。
+
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: 'agent CLI：claude 或 codex'
+        required: true
+        default: claude
+        type: choice
+        options: [claude, codex]
+      eval_ids:
+        description: '跑哪几条 eval，逗号分隔；留空跑全部'
+        required: false
+        default: ''
+      baseline:
+        description: '同时跑不带 skill 的基线（量 Skill Lift 用）'
+        required: true
+        default: true
+        type: boolean
+      judge:
+        description: '打开后由模型裁判评判 expectations（不参与放行判定）'
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    # 每周一 UTC 03:17 —— 错开整点，免得跟一堆定时任务挤在一起
+    - cron: '17 3 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  evals:
+    name: 结构化 eval
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      EVAL_IDS: ${{ inputs.eval_ids }}
+      BASELINE: ${{ inputs.baseline }}
+      JUDGE: ${{ inputs.judge }}
+      RUNNER: ${{ inputs.runner || 'claude' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 两条腿：with-skill 与 baseline。基线跑在同一个工作目录、同一份 fixture、
+      # 同一个模型，只是把 skill 从发现路径里摘掉 —— 唯一变量就是 SKILL.md。
+      - name: 装 agent CLI
+        run: |
+          if [ "$RUNNER" = "codex" ]; then
+            npm i -g @openai/codex
+          else
+            npm i -g @anthropic-ai/claude-code
+          fi
+
+      # 不要在这里往 $HOME 装 skill。基线腿要的就是「发现路径里没有这个 skill」，
+      # 一旦装到用户级目录，基线就可能被污染，量出来的 Lift 是假的。
+      # 挂载由 run.mjs 按工作目录逐条腿做：with-skill 那条挂，baseline 那条不挂。
+      - name: 跑 evals（带 skill + 不带 skill 两条腿）
+        run: node evals/run.mjs
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: 汇总 Skill Lift 并判定放行
+        run: node evals/run.mjs --report
+
+      - name: 上传原始产物
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quill-eval-results
+          path: results/
+
+      - name: 写进运行摘要
+        if: always()
+        run: cat results/summary.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || echo "（没有 summary.md）"

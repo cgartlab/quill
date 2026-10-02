@@ -24,3 +24,6 @@ package-lock.json
 *~
 .preview/
 preview/
+
+# Eval 跑测产物（工作目录、日志、summary）
+results/

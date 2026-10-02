@@ -8,6 +8,59 @@
 
 ---
 
+## [0.4.2] - 2026-10-03
+
+**给 skill 装上两道闸门：一道免费每次 PR 跑，一道花钱每周跑。**
+
+### 对你有什么影响
+
+- **没有写作行为变化。** 十一步工作流、硬规则、文件边界一个字没动。这一版只加基础设施
+- 装到 harness 里用不会感觉到任何不同——变的只是这个仓库自己怎么被维护
+- 你现在可以看这个 skill 的「体检报告」了：`.github/workflows/skill-quality.yml` 每次 PR 都会跑
+
+### 新增
+
+- **`scripts/validate-skill.mjs`**：零依赖静态校验器，18 项检查分四组——规范合规 / 路径与版本完整性 / 示例正文自洽 / eval 套件完整性
+- **`evals/check-workspace.mjs`**：机械断言执行器。每条 eval 现在分 `checks`（机器判）与 `expectations`（人判）两层
+- **`evals/run.mjs`**：跑测编排。为每条 eval 建两个工作目录，一条挂 skill、一条不挂，量 **Skill Lift**
+- **`.github/workflows/skill-quality.yml`**：push / PR 触发，只要 Node，不花钱
+- **`.github/workflows/skill-evals.yml`**：手动或每周一，跑真实 eval
+- **`docs/research/skill-ci-continuous-improvement.md`**：方法与案例调研
+
+### 关键取舍
+
+**为什么必须跑基线。** 在 947 组配对样本上，真实 skill 的平均 Skill Lift 只有 0.2134，且只有 72.8% 为正（[ACES, arXiv:2608.20614](https://arxiv.org/abs/2608.20614)）——约四分之一的 skill 对结果没有贡献甚至有害。只跑带 skill 的那条腿，测试永远是绿的。`run.mjs` 因此默认跑基线，并逐条标注「这条是 skill 挣来的」/「装了 skill 反而挂」/「同分，这条拦不住它」。
+
+**为什么静态扫描不能顶替执行。** 同一篇论文测出静态扫描闸门与 LLM 评判的 Spearman ρ = **0.14**——结构合规与实际效果几乎正交。所以两层必须都有。
+
+**为什么设了 Lift 阈值却不跑基线要判失败。** fail closed。指标算不出来时放行，等于没有闸门。
+
+**为什么校验器要自检。** CI 里有一条 job 故意往 `SKILL.md` 塞一个坏路径，确认校验器确实会报错。失灵的检查器比没有检查器更危险。
+
+### 修复
+
+- **「不碰你的草稿」第一次可以验证。** 新增 `unchanged` 断言：跑之前给受保护文件拍 sha256 快照，跑完比对。这条承诺以前只是 SKILL.md 里的一句话
+- **示例文章自检**：把 `SKILL.md` 里的禁用词自动抽出来扫示例正文。范本里出现禁用词，等于在教模型写违例稿（当前 47 个禁用词，示例正文零命中）
+
+### 已知债务
+
+- **SKILL.md 正文约 8030 token，超出 Agent Skills 规范建议的 5000。** 校验器报为警告而非错误——拆它是独立的一次重构。方向是「风格与禁用」整段下沉到 `references/`，但要注意反向成本：禁用清单是这套 skill 最有辨识度的部分，0.3.0 拆 A/B 两档时已经踩过"过度执行会改硬"的坑，拆之前应先量一次触发后 reference 的实际加载率
+
+<details>
+<summary>技术细节：本次发版范围</summary>
+
+三份调研来源的机制对照与取舍见 `docs/research/skill-ci-continuous-improvement.md`。采纳的是四样：skilljack-evals 的配对基线与 fail-closed 阈值、promptfoo 的「确定性断言优先」、SQS 的「规则必须被测试覆盖」、ACES 的 Lift 口径。
+
+未采纳：skilljack-evals 本体（TS + npm 依赖，引入成本大于收益）、promptfoo（配置面向 prompt/RAG，测七文件结构用不上，留作将来量主观写作质量时的选项）、SQS 的 101 条规则（取向偏安全与结构）、自动改写 skill 文本（前提是先有可信失败信号，quill 目前还没有）。
+
+本地验证：静态校验 18 通过 / 1 警告；断言执行器双向可判——eval 2 篡改用户草稿与新建 `draft.md` 均被抓出，eval 3 干净目录通过，eval 7 注入「综上所述」「说白了」被抓出；`run.mjs --report` 三种闸门场景（通过 / 低于阈值 / 无基线却设阈值）判定均符合预期。未验证：真实 agent 调用（需 API key 与 runner 特权）。
+
+修掉的两个实现缺陷：`globToRegExp` 把 `**` 当普通正则导致 `**/draft.md` 误匹配 `ai-draft.md`（会让"没新建 draft.md"这条断言永远为真）；`run.mjs` 里 `pct` 在 `--report` 分支之后声明，触发 TDZ 崩溃。
+
+</details>
+
+---
+
 ## [0.4.1] - 2026-09-30
 
 **文档归位：README 瘦身、纲领统一、示例修正。**
@@ -273,3 +326,4 @@
 [0.3.0]: https://github.com/cgartlab/quill/releases/tag/v0.3.0
 [0.4.0]: https://github.com/cgartlab/quill/releases/tag/v0.4.0
 [0.4.1]: https://github.com/cgartlab/quill/releases/tag/v0.4.1
+[0.4.2]: https://github.com/cgartlab/quill/releases/tag/v0.4.2

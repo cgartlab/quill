@@ -106,13 +106,41 @@ quill/
 │   ├── logo-tile.svg             # 圆角图标版
 │   ├── templates/                # 5 个模板
 │   └── examples/sample-article/  # 完整七文件示范
-├── docs/research/                # 设计依据（logo SVG 生成调研）
 ├── evals/                        # 7 条结构性用例 + fixture
+│   ├── evals.json                # 用例定义：checks（机械断言）+ expectations（散文断言）
+│   ├── check-workspace.mjs       # 机械断言执行器：文件 / frontmatter / 用户草稿是否被改
+│   ├── run.mjs                   # 跑测编排：带 skill 与不带 skill 两条腿，量 Skill Lift
+│   └── files/                    # eval 2 的 fixture
+├── scripts/
+│   └── validate-skill.mjs        # 静态校验器：规范 / 路径 / 版本 / 自洽 / eval 完整性
+├── .github/workflows/            # 两道闸门
+│   ├── skill-quality.yml         # 免费：每次 PR 跑静态校验
+│   └── skill-evals.yml           # 花钱：手动或每周跑真实 eval
+├── docs/research/                # 设计依据调研
 ├── LICENSE
 └── README.md
 ```
 
 渐进式披露：`SKILL.md` 只放核心逻辑，参考文档用到才加载。
+
+---
+
+## 质量是怎么被守住的
+
+skill 会腐坏——引用断链、版本号漂移、示例文章混进自己禁掉的词。这些都不需要模型来发现。
+
+每次 push / PR，`.github/workflows/skill-quality.yml` 跑 `scripts/validate-skill.mjs`（零依赖，只要 Node，**不花钱**），查四类问题：
+
+- **规范**：`name` / `description` / `metadata` 是否符合 [Agent Skills 规范](https://agentskills.io/specification)
+- **完整性**：`SKILL.md` 引用的路径是否都存在；`references/` 里的文件是否都登记进「渐进式披露」（**没登记等于 Agent 永远不会加载**）；版本与日期是否与 CHANGELOG 对得上
+- **自洽**：把 `SKILL.md` 里的禁用词自动抽出来，扫示例文章正文——**范本里出现禁用词，等于在教模型写违例稿**
+- **eval**：每条用例至少有一条机械断言，断言类型必须真的被实现，fixture 必须存在，负例必须留着
+
+要花模型调用的那道闸门单独放在 `skill-evals.yml`（手动或每周一）。它为每条用例建两个工作目录，一条挂 skill、一条不挂，同模型同 prompt 同断言，**唯一变量是 `SKILL.md`**——差值就是 Skill Lift。
+
+> 为什么不跑基线就没有意义：在 947 组配对样本上，真实 skill 的平均 Lift 只有 0.2134，且只有 72.8% 为正（[ACES, arXiv:2608.20614](https://arxiv.org/abs/2608.20614)）。**约四分之一的 skill 对结果没有贡献甚至有害**——只跑带 skill 的那条腿，你永远不会知道。
+
+设计取舍与出处见 [`docs/research/skill-ci-continuous-improvement.md`](./docs/research/skill-ci-continuous-improvement.md)。
 
 ---
 

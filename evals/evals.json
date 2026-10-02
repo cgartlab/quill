@@ -1,11 +1,27 @@
 {
   "skill_name": "quill",
-  "note": "结构性 evals：机械可验证的行为（文件结构、frontmatter、只读边界、提问触发、负例不触发）。主观写作质量不在本组断言内。运行方法见 evals/README.md。",
+  "note": "结构性 evals。每条 eval 分两层：checks 是机械可跑的断言（由 evals/check-workspace.mjs 在 CI 里判定），expectations 是散文断言（机械判不了的，留给人工或模型裁判）。两层必须都在 —— 只有 expectations 的 eval 会被 validate-skill.mjs 拦下，因为它等于没测。运行方法见 evals/README.md。",
+  "harness": {
+    "note": "CI 里用什么 agent 跑由 workflow 的 runner 输入决定。每条 eval 都在干净的一次性工作目录里跑，跑之前对 protect 里的文件拍 sha256 快照，跑完比对 —— 这就是「用户草稿只读不写」这条承诺的机器验证方式。",
+    "protect_field": "protect 列出绝不允许被改动的路径（glob）"
+  },
   "evals": [
     {
       "id": 1,
       "prompt": "帮我写一篇关于「AI 与设计师的关系」的文章",
       "expected_output": "创建七文件项目结构，用结构化提问引导构思，进入核心论点精修",
+      "checks": [
+        { "id": "index-created", "kind": "file_exists", "path": "*/_index.md" },
+        { "id": "claim-created", "kind": "file_exists", "path": "*/claim.md" },
+        { "id": "evidence-created", "kind": "file_exists", "path": "*/evidence.md" },
+        { "id": "audience-created", "kind": "file_exists", "path": "*/audience.md" },
+        { "id": "style-created", "kind": "file_exists", "path": "*/style.md" },
+        { "id": "draft-created", "kind": "file_exists", "path": "*/ai-draft.md" },
+        { "id": "index-type", "kind": "frontmatter_has", "path": "*/_index.md", "key": "type", "value": "index" },
+        { "id": "draft-type", "kind": "frontmatter_has", "path": "*/ai-draft.md", "key": "type", "value": "ai-draft" },
+        { "id": "user-draft-untouched", "kind": "file_absent", "path": "*/draft.md" },
+        { "id": "asked-user", "kind": "manual", "note": "调用了结构化提问工具提出文章类型 / 论点方向 / 论证类型" }
+      ],
       "expectations": [
         "在写作根目录下创建了形如 YYYY-MM-DD-slug/ 的文章文件夹",
         "文件夹内创建了 Agent 六文件：_index.md、claim.md、evidence.md、audience.md、style.md、ai-draft.md",
@@ -18,10 +34,20 @@
     },
     {
       "id": 2,
-      "prompt": "我的文章项目在 evals/files/existing-draft/40-Writing/2026-09-20-remote-work/，草稿写了一半（文件名是「我的文章.md」，不是 draft.md），帮我理一下主线",
+      "prompt": "我的文章项目在 40-Writing/2026-09-20-remote-work/，草稿写了一半（文件名是「我的文章.md」，不是 draft.md），帮我理一下主线",
       "expected_output": "检测到用户草稿，只读不修改，分析写入 ai-draft.md",
       "files": [
         "evals/files/existing-draft"
+      ],
+      "fixture_root": "evals/files/existing-draft",
+      "protect": [
+        "40-Writing/**/我的文章.md"
+      ],
+      "checks": [
+        { "id": "user-draft-byte-identical", "kind": "unchanged", "patterns": ["40-Writing/**/我的文章.md"] },
+        { "id": "no-default-draft", "kind": "file_absent", "path": "40-Writing/**/draft.md" },
+        { "id": "analysis-landed-in-ai-draft", "kind": "file_exists", "path": "40-Writing/**/ai-draft.md" },
+        { "id": "recognized-filename", "kind": "manual", "note": "识别出草稿是「我的文章.md」而非默认 draft.md" }
       ],
       "expectations": [
         "识别出用户的草稿是「我的文章.md」而非默认的 draft.md",
@@ -34,7 +60,14 @@
     {
       "id": 3,
       "prompt": "帮我写一首关于秋天的诗",
-      "expected_output": "不激活 Quill——虚构创作超出适用范围",
+      "expected_output": "不激活 Quill —— 虚构创作超出适用范围",
+      "checks": [
+        { "id": "no-index", "kind": "file_absent", "path": "**/_index.md" },
+        { "id": "no-claim", "kind": "file_absent", "path": "**/claim.md" },
+        { "id": "no-evidence", "kind": "file_absent", "path": "**/evidence.md" },
+        { "id": "no-ai-draft", "kind": "file_absent", "path": "**/ai-draft.md" },
+        { "id": "actually-wrote-poem", "kind": "manual", "note": "直接以写诗回应，或说明 Quill 不适用于虚构创作" }
+      ],
       "expectations": [
         "没有创建 Quill 的七文件项目结构",
         "没有创建 claim.md / evidence.md / audience.md / style.md / ai-draft.md",
@@ -45,6 +78,14 @@
       "id": 4,
       "prompt": "我想写点关于远程办公效率的东西，但还没想清楚要写什么",
       "expected_output": "触发结构化提问（三轮），而非直接开写正文",
+      "interactive": true,
+      "interactive_note": "这条要在能应答提问的 harness 里跑；headless CI 只能验证它建了项目、没抢先写正文。",
+      "checks": [
+        { "id": "structure-created", "kind": "file_exists", "path": "*/claim.md" },
+        { "id": "audience-created", "kind": "file_exists", "path": "*/audience.md" },
+        { "id": "style-created", "kind": "file_exists", "path": "*/style.md" },
+        { "id": "three-round-questions", "kind": "manual", "note": "调用提问工具，分三轮问类型 / 读者 / 风格，且至少一项标注推荐项" }
+      ],
       "expectations": [
         "调用了结构化提问工具（DSH 为 ask_user_question）",
         "提问包含文章类型选项（观点论述 / 经验分享 / 技术解析 / 趋势分析）",
@@ -58,6 +99,12 @@
       "id": 5,
       "prompt": "帮我写一篇关于「为什么我不用 AI 写初稿」的文章，我的观点是靠 AI 代笔会失去自己的判断力",
       "expected_output": "claim.md 有一句具体可反驳的论点；evidence.md 至少一条带来源",
+      "checks": [
+        { "id": "claim-created", "kind": "file_exists", "path": "*/claim.md" },
+        { "id": "claim-not-placeholder", "kind": "text_absent", "path": "*/claim.md", "terms": ["待补充", "TODO", "（占位", "浅谈"] },
+        { "id": "evidence-created", "kind": "file_exists", "path": "*/evidence.md" },
+        { "id": "claim-is-specific", "kind": "manual", "note": "核心论点具体可反驳，不是占位符或「浅谈 X」式标题" }
+      ],
       "expectations": [
         "claim.md 的核心论点是一句具体、可反驳的话，不是占位符或「浅谈 X」式标题",
         "claim.md 含 3-5 条支撑要点",
@@ -70,6 +117,12 @@
       "id": 6,
       "prompt": "帮我写一篇面向少数派（sspai）首页的文章，主题是「我用三个月重建了写作流程」",
       "expected_output": "加载 sspai-format.md，按其硬规则起草",
+      "checks": [
+        { "id": "style-created", "kind": "file_exists", "path": "*/style.md" },
+        { "id": "draft-created", "kind": "file_exists", "path": "*/ai-draft.md" },
+        { "id": "user-draft-untouched", "kind": "file_absent", "path": "*/draft.md" },
+        { "id": "platform-format", "kind": "manual", "note": "中英文间加空格、直角引号、披露 callout" }
+      ],
       "expectations": [
         "读取了 references/sspai-format.md",
         "style.md 的发布平台勾选了少数派",
@@ -83,6 +136,12 @@
       "id": 7,
       "prompt": "帮我把这段想法写成文章正文：远程办公让人失去了办公室提供的隐性节奏",
       "expected_output": "交付最短版本：无铺垫/过渡/空洞总结/复述，段落在长度预算内",
+      "checks": [
+        { "id": "draft-created", "kind": "file_exists", "path": "*/ai-draft.md" },
+        { "id": "no-filler", "kind": "text_absent", "path": "*/ai-draft.md", "terms": ["值得注意的是", "不难看出", "综上所述", "总而言之", "说白了", "先说结论", "从某种意义上说", "不可否认", "归根结底"] },
+        { "id": "user-draft-untouched", "kind": "file_absent", "path": "*/draft.md" },
+        { "id": "short-version", "kind": "manual", "note": "每段不超 5 句；起草后说明假设并指出哪些句子删掉也不损失信息" }
+      ],
       "expectations": [
         "ai-draft.md 的起草内容不含铺垫过渡词（值得注意的是 / 不难看出 / 换句话说 / 从某种意义上说 / 不可否认）",
         "不含空洞总结（综上所述 / 总而言之 / 这说明了…的重要性 / 归根结底）",

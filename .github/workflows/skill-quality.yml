@@ -1,0 +1,71 @@
+name: skill quality
+
+# 免费的第一道闸门：每次 push / PR 都跑，只做确定性检查，不需要任何 API key。
+# 花钱的那道在 skill-evals.yml（手动或每周）。
+#
+# 本地等价物：node scripts/validate-skill.mjs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: 静态校验
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 规范 / 路径完整性 / 版本对齐 / 示例正文自洽 / eval 套件完整性
+      - name: validate-skill
+        run: node scripts/validate-skill.mjs
+
+      # 官方 skills-ref 校验器（有则跑，没有就跳过 —— 不让第三方依赖卡住主闸门）
+      - name: skills-ref validate
+        continue-on-error: true
+        run: |
+          pipx run skills-ref validate . || echo "::notice::skills-ref 不可用，已跳过"
+
+      # 校验器的判定逻辑本身要能判对：故意打断一处，检查是否报出来
+      - name: 校验器自检（负例）
+        run: |
+          cp SKILL.md /tmp/SKILL.md.bak
+          printf '\n`references/does-not-exist.md`\n' >> SKILL.md
+          if node scripts/validate-skill.mjs > /tmp/out.txt 2>&1; then
+            cp /tmp/SKILL.md.bak SKILL.md
+            echo "::error::校验器没抓到 SKILL.md 里的坏路径，它已经失灵了"
+            exit 1
+          fi
+          cp /tmp/SKILL.md.bak SKILL.md
+          grep -q 'does-not-exist.md' /tmp/out.txt || {
+            echo "::error::校验器失败了，但报的不是一个已知的坏路径"
+            cat /tmp/out.txt; exit 1; }
+          echo "校验器在坏路径上正确报错"
+
+      - name: JSON 报告
+        if: always()
+        run: node scripts/validate-skill.mjs --format json > skill-quality.json || true
+
+      - name: 上传报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skill-quality-report
+          path: skill-quality.json
+
+      - name: 写进运行摘要
+        if: always()
+        run: node scripts/validate-skill.mjs >> "$GITHUB_STEP_SUMMARY" 2>&1 || true
