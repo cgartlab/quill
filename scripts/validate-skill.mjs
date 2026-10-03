@@ -325,11 +325,52 @@ function checkEvals() {
   else pass(G, 'D6', negatives.length + ' 条负例 eval 在守触发边界');
 }
 
+// ================================= E. 「经历与事件」硬规则必须贯穿四层（用户点名要求）
+// 这条规则最容易被执行成一句口号：只在 SKILL.md 里写一句，模板里没有栏位、
+// 示例里没有示范，Agent 就没有可落地的抓手。所以要求它在四层都留痕，任一层掉了就报错。
+const EVENT_RULE_LAYERS = [
+  { file: 'SKILL.md', anchors: ['经历与事件必须可指认来源', '不编造经历与事件'], label: '常驻硬规则' },
+  { file: 'references/evidence-guide.md', anchors: ['经历与事件的核实'], label: '细则' },
+  { file: 'assets/templates/evidence.md', anchors: ['经历与事件来源'], label: 'evidence 模板栏位' },
+  { file: 'assets/templates/style.md', anchors: ['场景与数据必填'], label: 'style 模板的开篇钩子来源栏' },
+  { file: 'assets/examples/sample-article/evidence.md', anchors: ['经历与事件来源'], label: '示例示范' },
+];
+
+function checkEventRule() {
+  const G = 'E · 经历与事件';
+  for (const layer of EVENT_RULE_LAYERS) {
+    if (!has(layer.file)) {
+      fail(G, 'E1', '缺少文件：' + layer.file);
+      continue;
+    }
+    const text = read(layer.file);
+    const missing = layer.anchors.filter((a) => !text.includes(a));
+    if (missing.length)
+      fail(G, 'E1', layer.label + '（' + layer.file + '）缺少锚点：' + missing.join(' / '),
+        '硬规则要在四层都留痕，任一层掉了 Agent 就少一个抓手');
+    else pass(G, 'E1', layer.label + ' 已留痕');
+  }
+
+  // E2 第九步验证里必须有对应检查项——没有它，规则在交付前不会被真的过一遍
+  const skill = read('SKILL.md');
+  if (!skill.includes('经历与事件已指认来源'))
+    fail(G, 'E2', '第九步验证里没有「经历与事件已指认来源」这一项');
+  else pass(G, 'E2', '第九步验证含该检查项');
+
+  // E3 示例草稿必须示范「拒绝编造」，而不只是碰巧没编
+  const draft = has('assets/examples/sample-article/ai-draft.md') ? read('assets/examples/sample-article/ai-draft.md') : '';
+  if (!draft) warn(G, 'E3', '示例草稿不存在，无法确认它示范了拒绝编造');
+  else if (!/不能替你造|不能造一个|没有可核实的现场/.test(draft))
+    warn(G, 'E3', '示例草稿没把「拒绝编造现场」写进起草说明——正确行为必须被示范，不能靠碰巧');
+  else pass(G, 'E3', '示例草稿示范了拒绝编造现场');
+}
+
 // ============================================================================ 输出
 checkSpec();
 checkIntegrity();
 checkSelfConsistency();
 checkEvals();
+checkEventRule();
 
 const errors = results.filter((r) => r.level === 'error');
 const warnings = results.filter((r) => r.level === 'warn');
