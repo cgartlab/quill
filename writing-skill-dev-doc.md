@@ -42,7 +42,7 @@ Quill 是 CGArtLab 的个人长文写作 Skill：以「结构为骨，自由为�
 quill/
 ├── SKILL.md                      # manifest + 工作流 + 环境自动探测 + 硬规则
 ├── CHANGELOG.md                  # 版本变更（面向使用者）
-├── references/                   # 8 份按需加载的参考
+├── references/                   # 9 份按需加载的参考
 │   ├── environment-detection.md  # 环境自动探测与适配
 │   ├── conception-guide.md       # 构思引导：三轮提问 + 说话位置五问
 │   ├── framework.md              # 四文件架构（标注模型驱动）
@@ -50,6 +50,7 @@ quill/
 │   ├── form-guide.md             # 形式分流：11 种文体的开篇·推进·结尾·常见错误
 │   ├── obsidian-adaptation.md    # Obsidian 适配
 │   ├── sspai-format.md           # 少数派首页写作格式
+│   ├── style-and-bans.md         # 风格规则 + 20 项禁用清单（校订期加载）
 │   └── writing-craft.md          # 论点深度 / 声音校准 / 结构接缝 + 句子级规则 + 六遍改稿 + 冷读
 ├── assets/
 │   ├── logo.svg                  # 标志（黑，浅色底）
@@ -154,11 +155,13 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 
 | 内容 | 唯一归属 |
 |------|---------|
-| 通用写作硬规则（最小优先 / 反浅 / 像作者 / 接缝 / 声音 / 事实 / 禁用清单） | `SKILL.md`「风格与禁用（硬规则）」——常驻加载，符合作者「禁止清单 > 鼓励清单」 |
+| 硬底线（不编造来源 / 不编造经历与事件 / 事实可核 / 文件边界） | `SKILL.md`「硬底线与风格」——常驻加载，任何阶段都不能破；符合作者「禁止清单 > 鼓励清单」 |
+| 形式级禁用清单（20 项 + A/B 分档 + 数量型作者基线 + 适用范围） | `references/style-and-bans.md`——**校订期加载**（0.6.0 起下沉；起草期不读，见「起草期许可」） |
+| 两段式原则（起草期只守"不编造" / 校订期统一核验与清零） | `SKILL.md`「核心理念」+ 第七步「起草期许可」 |
 | 规则冲突优先级与交付规范 | `SKILL.md`「规则冲突时的优先级」「交付」 |
 | 构思提问的三轮八问与说话位置五问 | `references/conception-guide.md` |
 | 写作测试方法（论点深度六道 / 声音校准四步 / 句子级规则十一条 / 篇章推进 / 判断边界 / 读者与会话感 / 结构接缝六条 / 起草规则 / 六遍改稿 + 冷读 + 可量化自检 / 写作自检） | `references/writing-craft.md` |
-| 材料门槛（五件材料规则 + 缩短兜底） | `SKILL.md`「第一步半：材料清点」+ `evidence.md` 模板 |
+| 材料真实性门槛（"每件都真"优先于"五件够数"）+ 缺口标记 + 缩短兜底 | `SKILL.md`「第一步半：材料清点」+ `evidence.md` 模板 |
 | 材料身份五分法 / 用户经历不能代写 / 正文归属 / 检索痕迹 | `references/evidence-guide.md` + `evidence.md` 模板 |
 | 形式分流（十一种形式的开篇·推进·结尾·常见错误） | `references/form-guide.md` |
 | 少数派排版细则（中英文空格 / 直角引号 / 图片语法 / 引用） | `references/sspai-format.md` |

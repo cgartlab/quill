@@ -115,10 +115,10 @@ function checkSpec() {
   const cjk = (body.match(/[\u4e00-\u9fff]/g) || []).length;
   const est = Math.round(cjk + (body.length - cjk) / 4);
   if (est > 5000) {
-    // 已知债务，不阻断 CI：SKILL.md 每次激活都要全量进上下文。
-    // 见 docs/research/skill-ci-continuous-improvement.md 的「待偿债务」。
-    warn(G, 'A9', 'SKILL.md 正文约 ' + est + ' token，超出规范建议的 5000（已知债务，待拆分）',
-      '每次激活都全量加载；把「风格与禁用」与句子级规则下沉到 references/ 可回收约 3000 token');
+    // 0.6.0 已把「风格与禁用」整段下沉到 references/style-and-bans.md（校订期加载），
+    // 常驻层从 9031 降到约 7900。剩下的超量来自工作流正文本身，属独立重构，不阻断 CI。
+    warn(G, 'A9', 'SKILL.md 正文约 ' + est + ' token，仍超规范建议的 5000（已知债务）',
+      '0.6.0 已下沉禁用清单（-1100 token）；剩余超量在工作流正文，需独立重构');
   } else pass(G, 'A9', 'SKILL.md 正文约 ' + est + ' token（规范建议 <5000）');
 }
 
@@ -221,30 +221,49 @@ function checkIntegrity() {
 
 // ============================================== C. 禁用清单 vs 示例正文（quill 专属）
 // Quill 的示例文章是 Agent 的风格范本。范本里出现禁用词，等于在教模型写违例稿。
-// 词表直接从 SKILL.md 的「风格与禁用」抽取 —— 新增禁用词会自动纳入检查。
-function extractBannedTerms(skill) {
-  const idx = skill.indexOf('## 风格与禁用');
-  if (idx === -1) return { terms: [], note: '未找到「风格与禁用」小节' };
+// 词表从 references/style-and-bans.md 抽取（禁令自 0.6.0 起在校订期加载，不再常驻 SKILL.md）
+// —— 新增禁用词会自动纳入检查，不必改这份脚本。
+const BAN_SOURCE = 'references/style-and-bans.md';
+
+function extractBannedTerms() {
+  if (!has(BAN_SOURCE)) return { terms: [], note: '未找到 ' + BAN_SOURCE };
+  const text = read(BAN_SOURCE);
   const terms = new Set();
-  for (const line of skill.slice(idx).split(/\r?\n/)) {
-    if (!/^\s*[-*>]+\s*\*\*禁/.test(line)) continue;
-    for (const quoted of line.match(/[“"]([^”"]+)[”"]/g) || []) {
-      for (const part of quoted.split(/\s*\/\s*/)) {
-        const t = part.trim();
-        if (/[：:→]/.test(t)) continue; // 排除「标题：说明」这类按基线放行的结构性标签
-        if (t.length < 2 || t.length > 12) continue;
-        if (!/^[\u4e00-\u9fff、]+$/.test(t)) continue;
-        terms.add(t);
-      }
+
+  // 名词化的触发动词是「句式模式」，不是禁用词本身——「实现」「完成」是常用词，
+  // 抽成独立禁用词会让示例文章误报。规则禁的是"进行/实现/完成/开展 + 动名词"这个结构。
+  const PATTERN_ONLY = new Set(['进行', '实现', '完成', '开展']);
+
+  // 用捕获组取引号内内容。**不要用 match() 的整体匹配**——那会把首尾引号一起带进
+  // 待比对字符串，使每个列表的第一个和最后一个词永远匹配不上（实测：赋能 / 说白了 /
+  // 先说结论 / 迭代闭环 曾因此从未被检查过）。
+  // 只取每行的**第一组**引号——那是禁令列表本身。行内后续引号是解释与举例
+  // （如"规则/机制的核心设计""在 50 寸超宽屏上……震撼的"），抽进来会造成假阳性，
+  // 而假阳性会逼人放宽检查，等于把检查废掉。
+  const grab = (line) => {
+    const first = line.match(/[“"]([^”"]+)[”"]/);
+    if (!first) return;
+    for (const part of first[1].split(/\s*\/\s*/)) {
+      const t = part.trim();
+      if (/[：:→]/.test(t)) continue; // 排除「标题：说明」这类按基线放行的结构性标签
+      if (t.length < 2 || t.length > 12) continue;
+      if (!/^[\u4e00-\u9fff、]+$/.test(t)) continue;
+      if (PATTERN_ONLY.has(t)) continue;
+      terms.add(t);
     }
+  };
+
+  for (const line of text.split(/\r?\n/)) {
+    if (/^\s*[-*>]+\s*\*\*禁/.test(line)) grab(line);
+    // 「不写 / 不用 / 不编造 / 不把」类条目同样是禁令，一并纳入
+    else if (/^\s*-\s*(不写|不用|不编造|不把)/.test(line)) grab(line);
   }
   return { terms: [...terms], note: '' };
 }
 
 function checkSelfConsistency() {
   const G = 'C · 自洽';
-  const skill = read('SKILL.md');
-  const { terms, note } = extractBannedTerms(skill);
+  const { terms, note } = extractBannedTerms();
   if (note) return warn(G, 'C1', note);
 
   const prose = ['assets/examples/sample-article/draft.md', 'assets/examples/sample-article/ai-draft.md'];

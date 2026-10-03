@@ -15,7 +15,9 @@ based-on: [claim, evidence, audience, style]
 ## 全文
 
 > 在此写出完整文章。标题、开篇、正文、结尾齐全；按 claim / evidence /
-> audience / style 四文件落笔，遵守 SKILL.md 的风格与禁用硬规则。
+> audience / style 四文件落笔。**起草期只守一条底线：不编造**——没有来源的
+> 地方写 `［请作者补：…］` 缺口标记往下写，形式级禁令留到校订期查（见 SKILL.md
+> 第七步「起草期许可」与 `references/style-and-bans.md`）。
 
 ## 起草说明
 

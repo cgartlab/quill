@@ -48,7 +48,7 @@
 5. 硬约束（激活即生效）：
    - 全程模型驱动，不跑脚本
    - 不编来源、不编事实、不把推测写成事实、不留 AI 占位文本
-   - 列不出五件具体材料就不写长文——研究、追问或缩短
+   - 材料可以少，但不能假——列不出五件照常写，缺口标 ［请作者补：…］，短而真好过长而假
    - 不修改用户的草稿——只读不写；你按自己的理解写出一篇完整草稿放进 ai-draft.md
    - 保留最终写作权——定观点、定去留、定声音
 
@@ -91,13 +91,14 @@ Your Project/
 quill/
 ├── SKILL.md                      # 清单 + 工作流 + 环境探测 + 硬规则
 ├── CHANGELOG.md                  # 版本变更
-├── references/                   # 8 份按需加载的参考
+├── references/                   # 9 份按需加载的参考
 │   ├── environment-detection.md  # 环境探测与适配
 │   ├── conception-guide.md       # 构思引导：三轮提问 + 说话位置五问
 │   ├── framework.md              # 四文件架构
 │   ├── evidence-guide.md         # 材料身份五分法 + 用户经历边界
 │   ├── form-guide.md             # 11 种文体的写法要点
 │   ├── writing-craft.md          # 句子级规则 + 六遍改稿 + 冷读
+│   ├── style-and-bans.md         # 风格规则 + 20 项禁用清单（校订期加载）
 │   ├── obsidian-adaptation.md    # Obsidian 适配
 │   └── sspai-format.md           # 少数派首页格式
 ├── assets/
