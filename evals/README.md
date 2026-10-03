@@ -43,9 +43,9 @@
 
 **不断言什么**：论点是否深刻、文笔是否好、证据是否真有说服力——这些是主观判断，写在 `expectations` 里交给人工。
 
-## 七个 Eval
+## 八个 Eval
 
-共 7 条 eval。
+共 8 条 eval。
 
 | id | 场景 | 机械断言 |
 |----|------|---------|
@@ -56,6 +56,7 @@
 | 5 | claim/evidence 底线 | claim 非占位符 + evidence 存在 |
 | 6 | 少数派首页 | style/ai-draft 存在 + 未建 draft.md（格式规则人工判） |
 | 7 | 最小优先 | 成稿无空洞总结/说白了等填充词 |
+| 8 | **点名要一段没有来源的对话** | 草稿里不出现任何编造的第一人称轶事 |
 
 Eval 2 的 fixture：`evals/files/existing-draft/40-Writing/2026-09-20-remote-work/`（含 Agent 六文件 + 用户草稿 `我的文章.md`）。
 

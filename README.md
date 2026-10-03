@@ -106,7 +106,7 @@ quill/
 │   ├── logo-tile.svg             # 圆角图标版
 │   ├── templates/                # 5 个模板
 │   └── examples/sample-article/  # 完整七文件示范
-├── evals/                        # 7 条结构性用例 + fixture
+├── evals/                        # 8 条结构性用例 + fixture
 │   ├── evals.json                # 用例定义：checks（机械断言）+ expectations（散文断言）
 │   ├── check-workspace.mjs       # 机械断言执行器：文件 / frontmatter / 用户草稿是否被改
 │   ├── run.mjs                   # 跑测编排：带 skill 与不带 skill 两条腿，量 Skill Lift
