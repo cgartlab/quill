@@ -91,7 +91,7 @@ Your Project/
 quill/
 ├── SKILL.md                      # 清单 + 工作流 + 环境探测 + 硬规则
 ├── CHANGELOG.md                  # 版本变更
-├── references/                   # 9 份按需加载的参考
+├── references/                   # 10 份按需加载的参考
 │   ├── environment-detection.md  # 环境探测与适配
 │   ├── conception-guide.md       # 构思引导：三轮提问 + 说话位置五问
 │   ├── framework.md              # 四文件架构
@@ -99,6 +99,7 @@ quill/
 │   ├── form-guide.md             # 11 种文体的写法要点
 │   ├── writing-craft.md          # 句子级规则 + 六遍改稿 + 冷读
 │   ├── style-and-bans.md         # 风格规则 + 20 项禁用清单（校订期加载）
+│   ├── refutation.md             # 反驳：五类反例 + 驳回判据（第八步加载）
 │   ├── obsidian-adaptation.md    # Obsidian 适配
 │   └── sspai-format.md           # 少数派首页格式
 ├── assets/

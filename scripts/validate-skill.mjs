@@ -370,10 +370,14 @@ function checkEventRule() {
     else pass(G, 'E1', layer.label + ' 已留痕');
   }
 
-  // E2 第九步验证里必须有对应检查项——没有它，规则在交付前不会被真的过一遍
+  // E2 第九步验证里必须有对应检查项——没有它，规则在交付前不会被真的过一遍。
+  // 注意**不能整篇 includes**：该短语也出现在硬底线与模板里，整篇搜会把"第九步掉了"
+  // 漏报成通过。所以先把第九步这一段切出来，只在段内找。
   const skill = read('SKILL.md');
-  if (!skill.includes('经历与事件已指认来源'))
-    fail(G, 'E2', '第九步验证里没有「经历与事件已指认来源」这一项');
+  const s9 = skill.slice(skill.indexOf('### 第九步'), skill.indexOf('### 第十步'));
+  const EVENT_CHECK_ANCHORS = ['经历与事件来源', '经历与事件已指认来源'];
+  if (!s9 || !EVENT_CHECK_ANCHORS.some((a) => s9.includes(a)))
+    fail(G, 'E2', '第九步验证里没有「经历与事件来源」这一项');
   else pass(G, 'E2', '第九步验证含该检查项');
 
   // E3 示例草稿必须示范「拒绝编造」，而不只是碰巧没编

@@ -42,7 +42,7 @@ Quill 是 CGArtLab 的个人长文写作 Skill：以「结构为骨，自由为�
 quill/
 ├── SKILL.md                      # manifest + 工作流 + 环境自动探测 + 硬规则
 ├── CHANGELOG.md                  # 版本变更（面向使用者）
-├── references/                   # 9 份按需加载的参考
+├── references/                   # 10 份按需加载的参考
 │   ├── environment-detection.md  # 环境自动探测与适配
 │   ├── conception-guide.md       # 构思引导：三轮提问 + 说话位置五问
 │   ├── framework.md              # 四文件架构（标注模型驱动）
@@ -51,6 +51,7 @@ quill/
 │   ├── obsidian-adaptation.md    # Obsidian 适配
 │   ├── sspai-format.md           # 少数派首页写作格式
 │   ├── style-and-bans.md         # 风格规则 + 20 项禁用清单（校订期加载）
+│   ├── refutation.md             # 反驳：五类反例 + 驳回判据（第八步加载）
 │   └── writing-craft.md          # 论点深度 / 声音校准 / 结构接缝 + 句子级规则 + 六遍改稿 + 冷读
 ├── assets/
 │   ├── logo.svg                  # 标志（黑，浅色底）
