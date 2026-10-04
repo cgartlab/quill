@@ -592,3 +592,4 @@ quill 原先的规则覆盖了**外部来源**（文献假引）与**用户经�
 [0.5.1]: https://github.com/cgartlab/quill/releases/tag/v0.5.1
 [0.6.0]: https://github.com/cgartlab/quill/releases/tag/v0.6.0
 [0.7.0]: https://github.com/cgartlab/quill/releases/tag/v0.7.0
+[0.8.0]: https://github.com/cgartlab/quill/releases/tag/v0.8.0
