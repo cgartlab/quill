@@ -91,9 +91,11 @@ Your Project/
 quill/
 ├── SKILL.md                      # 清单 + 工作流 + 环境探测 + 硬规则
 ├── CHANGELOG.md                  # 版本变更
-├── references/                   # 10 份按需加载的参考
+├── references/                   # 12 份按需加载的参考
+│   ├── author-profiling.md       # 读作者：从近 10 篇学价值观/习惯/审美/偏好（第零步）
+│   ├── draft-routing.md          # 按草稿状态分流：无草稿/部分/完整三条线
 │   ├── environment-detection.md  # 环境探测与适配
-│   ├── conception-guide.md       # 构思引导：三轮提问 + 说话位置五问
+│   ├── conception-guide.md       # 构思引导：核心疑问 + 三轮提问 + 说话位置五问
 │   ├── framework.md              # 四文件架构
 │   ├── evidence-guide.md         # 材料身份五分法 + 用户经历边界
 │   ├── form-guide.md             # 11 种文体的写法要点

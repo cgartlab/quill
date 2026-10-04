@@ -388,12 +388,75 @@ function checkEventRule() {
   else pass(G, 'E3', '示例草稿示范了拒绝编造现场');
 }
 
+// ============================================== F. 工作流形态（0.7.0：读作者 + 分流 + 提问纪律）
+// 这三条是"流程骨架"：掉了不会报任何错，但 Agent 会悄悄退回"直接开写"的老路。
+// 所以像 E 组一样锚定原文短语，任一层缺失即失败。
+const WORKFLOW_SHAPE = [
+  {
+    file: 'SKILL.md',
+    anchors: ['第零步：读作者', '_author-profile.md'],
+    label: '第零步读作者（常驻）',
+    hint: '所有步骤之前必须先学作者；少了它，后面的论点与风格就没有依据',
+  },
+  {
+    file: 'references/author-profiling.md',
+    anchors: ['价值观', '习惯', '审美', '偏好'],
+    label: '作者画像四维（细则）',
+    hint: '四个维度缺一个，"学习作者"就退化成只模仿句子',
+  },
+  {
+    file: 'SKILL.md',
+    anchors: ['没有草稿', '部分草稿', '完整草稿或大纲'],
+    label: '三分支路由（常驻）',
+    hint: '三种草稿状态必须各有去处，否则手里有草稿的用户会被当成没草稿重问一遍',
+  },
+  {
+    file: 'references/draft-routing.md',
+    anchors: ['A 线', 'B 线', 'C 线'],
+    label: '三分支细则',
+    hint: '每条线的顺序（先诊断后补 / 先补全后去 AI 味）是踩过坑才定下的',
+  },
+  {
+    file: 'references/conception-guide.md',
+    anchors: ['由来', '受众', '亲身经历', '平台'],
+    label: '核心疑问四问',
+    hint: '四问是文章的根；缺一项就该问用户要不要补',
+  },
+  {
+    file: 'SKILL.md',
+    anchors: ['不确定作者意图，必须问', '缺必要环节，必须问'],
+    label: '提问纪律（常驻）',
+    hint: '这两条不受步骤约束，掉了 Agent 就会靠猜推进',
+  },
+];
+
+function checkWorkflowShape() {
+  const G = 'F · 工作流形态';
+  for (const layer of WORKFLOW_SHAPE) {
+    if (!has(layer.file)) {
+      fail(G, 'F1', '缺少文件：' + layer.file);
+      continue;
+    }
+    const text = read(layer.file);
+    const missing = layer.anchors.filter((a) => !text.includes(a));
+    if (missing.length)
+      fail(G, 'F1', layer.label + '（' + layer.file + '）缺少锚点：' + missing.join(' / '), layer.hint);
+    else pass(G, 'F1', layer.label + ' 已留痕');
+  }
+
+  // F2「说人话」不能只写在开头的纲领里——它得真的管到"对用户说的话"
+  const skill = read('SKILL.md');
+  if (!skill.includes('说人话')) fail(G, 'F2', 'SKILL.md 里没有「说人话」这条约束');
+  else pass(G, 'F2', '说人话 已留痕');
+}
+
 // ============================================================================ 输出
 checkSpec();
 checkIntegrity();
 checkSelfConsistency();
 checkEvals();
 checkEventRule();
+checkWorkflowShape();
 
 const errors = results.filter((r) => r.level === 'error');
 const warnings = results.filter((r) => r.level === 'warn');

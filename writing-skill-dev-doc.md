@@ -42,9 +42,11 @@ Quill 是 CGArtLab 的个人长文写作 Skill：以「结构为骨，自由为�
 quill/
 ├── SKILL.md                      # manifest + 工作流 + 环境自动探测 + 硬规则
 ├── CHANGELOG.md                  # 版本变更（面向使用者）
-├── references/                   # 10 份按需加载的参考
+├── references/                   # 12 份按需加载的参考
+│   ├── author-profiling.md       # 读作者：近 10 篇 → 价值观/习惯/审美/偏好（第零步）
+│   ├── draft-routing.md          # 按草稿状态分流：无/部分/完整三条线
 │   ├── environment-detection.md  # 环境自动探测与适配
-│   ├── conception-guide.md       # 构思引导：三轮提问 + 说话位置五问
+│   ├── conception-guide.md       # 构思引导：核心疑问 + 三轮提问 + 说话位置五问
 │   ├── framework.md              # 四文件架构（标注模型驱动）
 │   ├── evidence-guide.md         # 材料身份五分法 + 用户经历边界 + 正文归属 + 检索痕迹
 │   ├── form-guide.md             # 形式分流：11 种文体的开篇·推进·结尾·常见错误
