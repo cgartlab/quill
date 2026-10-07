@@ -8,6 +8,37 @@
 
 ---
 
+## [0.10.0] - 2026-10-08
+
+**平台合规扫描从"校订期最后扫"改成"写作过程中就扫"，并扩到四平台共识。**
+
+### 对你有什么影响
+
+- **合规扫描提前到第六步之后**——用户勾选了发布平台，就按 `references/platform-compliance.md` 六项扫描当前草稿，**写作过程中发现踩线立刻改**，比校订期再返工便宜得多。第九步校订期作最终闸门复核。
+- **规则从"微信单平台"扩到"跨平台共识"**——四平台规则合并成六项扫描：标题 / 正文原文 / 图片 / 外链 / 导流话术 / AI 披露。已覆盖**微信 / 小红书 / 知乎 / 少数派**。
+- **补老板实际写作形态里的规则空白**（Task 5 反校验发现）：好物推荐 / 工具盘点类"疑似带货"、AI 图披露豁免三条件、引用来源链接 vs 跳转引导链接的区分、"未披露 + 无 AI 味 = 默认原创"兜底原则。
+
+### 新增
+
+- `references/platform-compliance.md` 重写：**六项扫描**替代原微信单平台两节结构（标题 / 正文原文 / 图片 / 外链 / 导流话术 / AI 披露），每项都配"扫什么位置 + 判据 + 关键词表"三段可执行内容。
+- **五类边界判据**（老板 6 篇实际写作反校验得出）：引用性截图 vs 搬运截图、自制图表 vs 站外表图、AI 图豁免三条件、引用来源链接 vs 跳转引导链接、好物推荐疑似带货三档。
+- **账号侧自查小节**：明确账号简介 / 自动回复 / 评论属于 Agent 看不到、由作者自查的范围，从扫描清单里剔除。
+- **推荐 AI 披露范式**：跨平台通吃的 callout 模板，一次披露到处能用（覆盖微信未强制 / 小红书强制 / 知乎要求标识 / 少数派强制 callout 四个平台）。
+
+### 调整
+
+- `SKILL.md` 第六步：新增"第六步之后 · 平台合规扫描"段落，说明写作过程中的合规扫描触发时机。
+- `SKILL.md` 第九步「四、校订期清零」：发布合规条目改为"最终闸门复核"定位，去掉"三类都要过一遍"的数字错表述。
+- `SKILL.md` 渐进式披露：`references/platform-compliance.md` 加载时机改为"第六步之后 + 第九步复核"双触发，明确"起草期不加载"。
+- `SKILL.md` 规则冲突优先级第 3 条："平台硬规则（如少数派格式）"改为显式列出 `references/sspai-format.md` 与 `references/platform-compliance.md`，让"平台硬规则"的覆盖范围不再有歧义。
+- `references/platform-compliance.md` frontmatter：新增 `platform: cross-platform` 字段，与 `sspai-format.md` 的 `platform: sspai` 同构。
+
+### 保持
+
+- **起草期「只守不编造」的许可不动**——platform-compliance.md 仍在起草期（第七步）不加载，避免扫得过早打断写作流。
+- **`style-and-bans.md` 不动**——形式禁令与发布合规是两种维度的红线，不合并。
+- **少数派已有独立 `sspai-format.md`**——不重复写少数派合规条目，只在 platform-compliance.md 里指向。
+
 ## [0.9.0] - 2026-10-08
 
 **新增发布合规参考，校订期多一道发布前扫描。**
@@ -617,3 +648,4 @@ quill 原先的规则覆盖了**外部来源**（文献假引）与**用户经�
 [0.7.0]: https://github.com/cgartlab/quill/releases/tag/v0.7.0
 [0.8.0]: https://github.com/cgartlab/quill/releases/tag/v0.8.0
 [0.9.0]: https://github.com/cgartlab/quill/releases/tag/v0.9.0
+[0.10.0]: https://github.com/cgartlab/quill/releases/tag/v0.10.0

@@ -104,7 +104,7 @@ quill/
 │   ├── refutation.md             # 反驳：五类反例 + 驳回判据（第八步加载）
 │   ├── obsidian-adaptation.md    # Obsidian 适配
 │   ├── sspai-format.md           # 少数派首页格式
-│   └── platform-compliance.md    # 发布平台合规红线（校订期加载）
+│   └── platform-compliance.md    # 跨平台发布合规红线（第六步之后 + 第九步加载）
 ├── assets/
 │   ├── logo.svg                  # 标志（黑，浅色底）
 │   ├── logo-inverse.svg          # 标志反白（深色底）
