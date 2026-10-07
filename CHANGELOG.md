@@ -8,6 +8,29 @@
 
 ---
 
+## [0.9.0] - 2026-10-08
+
+**新增发布合规参考，校订期多一道发布前扫描。**
+
+### 对你有什么影响
+
+- 第九步验证新增一条：**按目标发布平台扫 `references/platform-compliance.md` 的红线**——低创作度（直接搬运 / AIGC 原文照搬 / AIGC 图片为主体）与导流（互动 / 内容 / 多重嵌套）两类。当前覆盖**微信公众平台**，其他平台条目待补。
+- **命中红线不能用"文风就是这样"豁免**——平台审核不看作者意图。这条与 `references/style-and-bans.md` 的形式禁令独立并存，互不覆盖。
+
+### 新增
+
+- `references/platform-compliance.md`：新增发布合规参考，当前覆盖微信公众平台，按 `references/sspai-format.md` 的单平台结构对齐——低创作度红线 / 导流红线 / 常见误判边界 / 与 `style-and-bans.md` 的分工。后续可扩展到小红书 / B 站 / X / 少数派。
+
+### 调整
+
+- `SKILL.md` 第九步「四、校订期清零」——追加发布合规扫描条目，与已有 sspai-format 平台格式规则并列。
+- `SKILL.md` 渐进式披露——新增 `references/platform-compliance.md` 加载说明（校订期第九步加载，起草期不加载）。
+
+### 保持
+
+- `references/style-and-bans.md` 不动——形式禁令与发布合规是两种维度的红线，混进同一文件会让"能不能发"和"写得好不好"糊在一起，后续加新平台会更乱。
+- 起草期「只守不编造」的许可——两份校订期文件都后置加载，起草期不读。
+
 ## [0.8.0] - 2026-10-04
 
 **`_author-profile.md` 从写作根目录移入本次工作台内部，跨工作台共享可变状态的设计退役。**
@@ -593,3 +616,4 @@ quill 原先的规则覆盖了**外部来源**（文献假引）与**用户经�
 [0.6.0]: https://github.com/cgartlab/quill/releases/tag/v0.6.0
 [0.7.0]: https://github.com/cgartlab/quill/releases/tag/v0.7.0
 [0.8.0]: https://github.com/cgartlab/quill/releases/tag/v0.8.0
+[0.9.0]: https://github.com/cgartlab/quill/releases/tag/v0.9.0

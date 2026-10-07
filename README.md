@@ -91,7 +91,7 @@ Your Project/
 quill/
 ├── SKILL.md                      # 清单 + 工作流 + 环境探测 + 硬规则
 ├── CHANGELOG.md                  # 版本变更
-├── references/                   # 12 份按需加载的参考
+├── references/                   # 13 份按需加载的参考
 │   ├── author-profiling.md       # 读作者：从近 10 篇学价值观/习惯/审美/偏好（第零步）
 │   ├── draft-routing.md          # 按草稿状态分流：无草稿/部分/完整三条线
 │   ├── environment-detection.md  # 环境探测与适配
@@ -103,7 +103,8 @@ quill/
 │   ├── style-and-bans.md         # 风格规则 + 20 项禁用清单（校订期加载）
 │   ├── refutation.md             # 反驳：五类反例 + 驳回判据（第八步加载）
 │   ├── obsidian-adaptation.md    # Obsidian 适配
-│   └── sspai-format.md           # 少数派首页格式
+│   ├── sspai-format.md           # 少数派首页格式
+│   └── platform-compliance.md    # 发布平台合规红线（校订期加载）
 ├── assets/
 │   ├── logo.svg                  # 标志（黑，浅色底）
 │   ├── logo-inverse.svg          # 标志反白（深色底）
