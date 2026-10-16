@@ -1,8 +1,8 @@
 # Quill Skill 开发文档
 
-**版本**：0.4.1
+**版本**：0.11.0
 **状态**：0.x 开发中（模型驱动 + 少数派格式 + 环境自动探测 + 文件边界 + 材料门槛 + 材料身份 + 完整草稿 + 写作工艺 + 形式分流 + 硬规则 + 禁令后置与分档）。流程与文件约定尚未稳定，破坏性变更是常事。
-**最后更新**：2026-09-30
+**最后更新**：2026-10-16
 
 ---
 
@@ -36,13 +36,13 @@ Quill 是 CGArtLab 的个人长文写作 Skill：以「结构为骨，自由为�
 - 活人感写作 `human-writing`（[cgartlab/human-writing](https://github.com/cgartlab/human-writing)，上游 KKKKhazix/human-writing v1.1.0，MIT）：材料门槛、材料身份五分法、句子级规则、多遍改稿与冷读、形式分流、可量化自检的判据来源。已按 Quill 的四文件架构与模型驱动原则重写，非直接搬运；其只读检查脚本未采纳（Quill 坚持无脚本）。
 - 既有 skill：`edic-design-system`（结构范式：SKILL.md + references 全大写概念文件 + 按需加载 + 模型自检清单）；`creative-write`（已不存在，motto 由 Quill 继承）。
 
-## 四、Skill 包结构（保留原架构，无 scripts/）
+## 四、Skill 包结构（保留原架构；写作流程无脚本）
 
 ```
 quill/
 ├── SKILL.md                      # manifest + 工作流 + 环境自动探测 + 硬规则
 ├── CHANGELOG.md                  # 版本变更（面向使用者）
-├── references/                   # 12 份按需加载的参考
+├── references/                   # 13 份按需加载的参考
 │   ├── author-profiling.md       # 读作者：近 10 篇 → 价值观/习惯/审美/偏好（第零步）
 │   ├── draft-routing.md          # 按草稿状态分流：无/部分/完整三条线
 │   ├── environment-detection.md  # 环境自动探测与适配
@@ -52,6 +52,7 @@ quill/
 │   ├── form-guide.md             # 形式分流：11 种文体的开篇·推进·结尾·常见错误
 │   ├── obsidian-adaptation.md    # Obsidian 适配
 │   ├── sspai-format.md           # 少数派首页写作格式
+│   ├── platform-compliance.md    # 跨平台合规扫描：六项红线（微信 / 小红书 / 知乎 / 少数派）
 │   ├── style-and-bans.md         # 风格规则 + 20 项禁用清单（校订期加载）
 │   ├── refutation.md             # 反驳：五类反例 + 驳回判据（第八步加载）
 │   └── writing-craft.md          # 论点深度 / 声音校准 / 结构接缝 + 句子级规则 + 六遍改稿 + 冷读
@@ -75,15 +76,22 @@ quill/
 │       └── draft.md
 ├── docs/research/                # 设计依据（logo SVG 生成调研）
 ├── evals/                        # 结构性 evals
-│   ├── evals.json                # 7 个结构性测试用例（38 条断言）
+│   ├── evals.json                # 8 个结构性测试用例（38 条断言）
 │   ├── README.md                 # 运行方法 + skill-creator 工具问题记录
 │   └── files/existing-draft/     # 已有草稿 fixture（文件名无关检测用）
+├── scripts/
+│   └── validate-skill.mjs        # 零依赖静态校验器（A–F 六组；仓库自检，不参与写作）
+├── .github/workflows/
+│   ├── skill-quality.yml         # 静态校验：每次 push / PR（免费）
+│   └── skill-evals.yml           # 真实 eval：手动 / 每周一（花 API，度量 Skill Lift）
 ├── LICENSE                       # CC BY-NC-SA 4.0
 ├── README.md                     # 面向使用者的说明
 └── writing-skill-dev-doc.md      # 本文档
 ```
 
-无 `scripts/`。原 `scaffold / verify / compile` 三项操作以模型指令形式留在 SKILL.md 的第一、九、十步；反驳是新增的第八步。
+写作流程无脚本——原 `scaffold / verify / compile` 三项操作以模型指令形式留在 SKILL.md 的第一、九、十步；反驳是新增的第八步。
+
+`scripts/validate-skill.mjs` 是 0.4.2 起加入的**仓库自检**脚本，不参与写作流程：它只校验本仓库自身的规范与完整性（A–F 六组），由 `.github/workflows/` 下的两条 CI 调用（见「十三、skill 工程质量」的「自动闸门」）。
 
 ## 五、模型驱动的校验（替代脚本）
 
@@ -126,7 +134,7 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 
 ## 十一、结构性 evals
 
-- 新增 `evals/evals.json`：7 个结构性测试用例（38 条断言），只断言机械可验证的行为——七文件结构、frontmatter 合规、文件边界（用户草稿只读）、构思提问触发、负例不触发、claim/evidence 质量底线。
+- 新增 `evals/evals.json`：8 个结构性测试用例（38 条断言），只断言机械可验证的行为——七文件结构、frontmatter 合规、文件边界（用户草稿只读）、构思提问触发、负例不触发、claim/evidence 质量底线。
 - Eval 2 的 fixture `evals/files/existing-draft/`：预置 Agent 六文件 + 用户草稿 `我的文章.md`（故意不叫 draft.md），验证文件名无关检测与字节级只读。
 - `evals/README.md`：运行方法（[skill-creator](https://github.com/deepseek-ai) 的 run_eval.py 依赖 claude CLI，本机无，改用 dsh headless / codex / opencode 执行）+ 本机环境绕过 + skill-creator 工具问题记录。
 - 用官方 `quick_validate.py` 验证：`Skill is valid!`（需 `PYTHONUTF8=1` 绕过其编码 bug）。
@@ -180,11 +188,21 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 
 - 声音校准在取不到作者语料时（离线 / 本地无语料）必须**明说"这版会比较通用"**，不得假装有指纹、不得静默退回通用 AI 腔；可让用户粘贴 2–3 句旧句当样本。
 
-**成本**（字符数，≈token 代理）：`SKILL.md` 12553（常驻）；references 合计 31089（按需全载）；走完十步的典型 session 约 38.3K（常驻 + 激活探测 + 构思 + 证据 + 形式 + 工艺），面向少数派再加 `sspai-format.md` 约 41.0K。
+**自动闸门**（0.4.2 起；维护本仓库自身，不参与写作流程）：
+
+| 闸门 | 触发 | 作用 |
+|------|------|------|
+| `scripts/validate-skill.mjs` | 本地手动 | 零依赖静态校验器，A–F 六组：规范合规 / 路径与版本完整性 / 示例正文自洽 / eval 套件完整性 / 经历与事件硬规则 / 工作流形态 |
+| `.github/workflows/skill-quality.yml` | push / PR | 跑上面的静态校验，免费 |
+| `.github/workflows/skill-evals.yml` | 手动 / 每周一 03:17 UTC | 跑真实 eval，度量 Skill Lift（花 API） |
+
+B 组校验 `SKILL.md metadata.version` ↔ `CHANGELOG` 顶部条目的一致性，并核对 `evals/README.md` 声明的用例数与实际一致。
+
+**成本**（字符数，≈token 代理）：`SKILL.md` 29341（常驻）；references 合计 119800（按需全载）；走完十步的典型 session 约 103.6K（常驻 + 激活探测 + 构思 + 证据 + 形式 + 工艺），面向少数派再加 `sspai-format.md` 约 112.7K。
 ## 十四、已知边界
 
 - "发布后回看"靠日历提醒，模型替不了。
-- 风格契约与少数派规范需定期对齐官方手册更新（手册更新日期 2026-09-18）。
+- 风格契约与少数派规范需定期对齐官方手册更新（手册更新日期 2026-10-15）。
 - 环境自动探测依赖模型能读到环境信号；信号不足时需用户确认，不默认假设。
 - skill 不判断"这个观点要不要发"——那是创作者的权力。
 - Agent 绝不修改用户的草稿——只读不写（文件名不限）；Agent 的草稿写 `ai-draft.md`，由用户决定是否采纳。
