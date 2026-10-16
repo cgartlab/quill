@@ -684,3 +684,4 @@ quill 原先的规则覆盖了**外部来源**（文献假引）与**用户经�
 [0.8.0]: https://github.com/cgartlab/quill/releases/tag/v0.8.0
 [0.9.0]: https://github.com/cgartlab/quill/releases/tag/v0.9.0
 [0.10.0]: https://github.com/cgartlab/quill/releases/tag/v0.10.0
+[0.11.0]: https://github.com/cgartlab/quill/releases/tag/v0.11.0
