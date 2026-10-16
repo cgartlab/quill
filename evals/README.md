@@ -1,4 +1,4 @@
-# Quill 结构性 Evals
+﻿# Quill 结构性 Evals
 
 用 [skill-creator](https://github.com/deepseek-ai) 的 eval 框架为 Quill 编写的**结构性**测试：只断言机械可验证的行为，不评分主观写作质量。
 
