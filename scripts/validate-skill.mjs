@@ -169,10 +169,12 @@ function checkIntegrity() {
     fail(G, 'B5', '日期不一致：SKILL.md metadata.date=' + meta.date + '，CHANGELOG 最新=' + topDate);
   else pass(G, 'B5', '日期一致：' + topDate);
 
-  // B6 CHANGELOG 底部必须有该版本的链接引用，否则 release 链接 404
+  // B6 CHANGELOG 底部必须有该版本的链接引用，否则 release 链接 404。
+  // 升为 error（原为 warn）：漏过的代价是 CHANGELOG 慢慢烂掉，而烂掉的
+  // CHANGELOG 会让「版本门槛通过条件」失去依据。
   for (const m of entries) {
     const ver = m[1];
-    if (!changelog.includes('[' + ver + ']:')) warn(G, 'B6', 'CHANGELOG 缺少 ' + ver + ' 的链接引用定义');
+    if (!changelog.includes('[' + ver + ']:')) fail(G, 'B6', 'CHANGELOG 缺少 ' + ver + ' 的链接引用定义');
   }
 
   // B7 README 的目录结构必须跟上仓库现状。
@@ -216,6 +218,21 @@ function checkIntegrity() {
       if (problems.length) warn(G, 'B7', 'README 目录树与仓库现状不一致', problems.join('; '));
       else pass(G, 'B7', 'README 目录树的条目数与仓库现状一致');
     }
+  }
+
+  // B8 dev-doc 的版本号必须与 SKILL.md 同步。
+  // `writing-skill-dev-doc.md` 从 0.5.0 起就没再跟过版本，B4/B5 只管
+  // SKILL.md ↔ CHANGELOG，dev-doc 不在任何检查里——0.4.1 漂到 0.11.0
+  // （落后 7 版）就是这样一路绿灯漏过去的。纳进来让漂移在 CI 就暴露。
+  if (has('writing-skill-dev-doc.md')) {
+    const devdoc = read('writing-skill-dev-doc.md');
+    const m = devdoc.match(/^\*\*版本\*\*[:：]\s*(\S+)/m);
+    if (!m) warn(G, 'B8', 'writing-skill-dev-doc.md 里找不到 `**版本**：` 行');
+    else if (m[1] !== meta.version)
+      fail(G, 'B8', 'dev-doc 版本不一致：writing-skill-dev-doc.md=' + m[1] + '，SKILL.md=' + meta.version);
+    else pass(G, 'B8', 'dev-doc 版本与 SKILL.md 一致：' + m[1]);
+  } else {
+    warn(G, 'B8', 'writing-skill-dev-doc.md 不存在，无法校验 dev-doc 版本');
   }
 }
 
