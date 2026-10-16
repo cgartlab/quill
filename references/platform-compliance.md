@@ -21,7 +21,7 @@ platform: cross-platform
 
 ## 适用与豁免
 
-- **在稿件指向任一已覆盖平台时生效**（`client:` frontmatter 含 `wechat / xhs / zhihu / sspai`，或作者明确说要发到某平台）
+- **在稿件指向任一已覆盖平台时生效**（任一命中即生效）：**① `style.md` 的「发布平台」勾选了 少数派 / 微信 / 小红书 / 知乎 之一**（主判据）；② 作者明确说要发到某覆盖平台；③ 作者草稿或文章的 frontmatter 带平台标识（如 `platform: [sspai.com]` / `client: [sspai]`）
 - **不发这些平台的稿件豁免本文件**（只看 style-and-bans）
 - **Agent 自己写的 `ai-draft.md` 是用户草稿的一部分**——扫描时把 Agent 的产物和用户的稿子一视同仁，用户决定采纳哪一段。Agent 不用自己给"我这段是不是 AIGC"打标，但**不能把整段 AI 生成的文字不改动地塞进 `ai-draft.md`**（等于把低创作度原文照搬的责任从用户转嫁给 Agent）。最低增量：AI 生成段落采纳前，作者要**改结构 + 补自己的判断**，不能只改措辞。
 
@@ -95,7 +95,7 @@ platform: cross-platform
 
 ### 六、AI 使用披露（跨平台一致要求）
 
-**扫什么**：文首、文末、frontmatter 的 `ai-assisted` 字段。
+**扫什么**：文首的披露段（少数派用 `> [!NOTE]` callout）、文末的声明，以及稿件 frontmatter 里若有的披露字段。
 
 **各平台要求**：
 - **少数派**：**强制**。文首用 `> [!NOTE] AI 辅助创作披露` callout，写明工具 / 用途 / 目的 / 范围（见 `references/sspai-format.md` 「AI 使用披露」）。2026-10-15 修订后**不再要求**具体提示词与修改过程；AI 味浓但未完全声明的内容，若动机诚实 + 对读者有价值 + 不让读者误会是原创，可获编辑部豁免
