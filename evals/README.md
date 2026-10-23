@@ -78,6 +78,14 @@ node evals/run.mjs --report            # 出 summary.md 并判定放行
 EVAL_IDS=2,7 BASELINE=1 node evals/run.mjs
 ```
 
+### 断言执行器自己的回归
+
+```bash
+node evals/selftest-unchanged.mjs    # 六个场景，退出码 0 = unchanged 断言行为正确
+```
+
+`unchanged` 守的是"不碰用户草稿"，它失灵过一次：只遍历跑完之后仍存在的文件，于是草稿被删掉也判"逐字节未变"。现在快照里的每个受保护文件都要求"还在、且哈希相同"，跑完新出现的受保护文件同样算破坏，一个都匹配不到的 pattern 直接判失败——这份自测盯的就是这几个方向。
+
 ### 本地手工跑单条
 
 skill-creator 的 `run_eval.py` 硬依赖 `claude` CLI。可用等价 harness 替代：把 prompt 放进干净的临时工作目录，让 harness 带着 Quill 执行，再跑断言执行器。

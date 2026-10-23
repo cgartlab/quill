@@ -140,15 +140,27 @@ const KINDS = {
     }
     return { pass: !where.length, note: where.length ? where.join('; ') : '最多 ' + worst + ' 次（上限 ' + c.max + '）' };
   },
+  // 受保护文件必须「跑之前 = 跑之后」，两个方向都要查：
+  //   ① 快照里的每个受保护文件，跑完之后必须还在、且哈希相同 —— 只遍历跑之后的文件会漏掉删除：
+  //      文件被删了就不在 match() 结果里，于是「逐字节未变」永远通过。这是真出现过的漏洞。
+  //   ② 跑完之后新出现的受保护文件也算破坏（换个文件名重写等同于改了草稿）。
+  //   ③ 一个都匹配不到的 pattern 是死保护指令，直接判失败，别让它假装在守什么。
   unchanged: (c, ctx) => {
     if (!ctx.snapshot) return { pass: false, note: '需要 --snapshot 才能验证「跑之前 = 跑之后」' };
     const bad = [];
+    const now = new Set(ALL_FILES);
+    const snapshotFiles = Object.keys(ctx.snapshot);
     for (const pattern of c.patterns) {
-      for (const f of match(pattern)) {
-        const before = ctx.snapshot[f];
-        if (before == null) { bad.push(f + ' 不在跑之前的快照里'); continue; }
-        const after = sha256(readFileSync(join(WORKSPACE, f)));
-        if (after !== before) bad.push(f + ' 被改动了（用户文件只读不写）');
+      const re = globToRegExp(pattern);
+      const before = snapshotFiles.filter((f) => re.test(f));
+      if (!before.length) { bad.push(pattern + ' 在跑之前的快照里没有任何匹配（这条保护指令没在守东西）'); continue; }
+      for (const f of before) {
+        if (!now.has(f)) { bad.push(f + ' 被删除了（用户文件只读不写）'); continue; }
+        if (sha256(readFileSync(join(WORKSPACE, f))) !== ctx.snapshot[f])
+          bad.push(f + ' 被改动了（用户文件只读不写）');
+      }
+      for (const f of now) {
+        if (re.test(f) && ctx.snapshot[f] == null) bad.push(f + ' 是跑之后才出现的受保护文件');
       }
     }
     return { pass: !bad.length, note: bad.join('; ') || '受保护文件逐字节未变' };
