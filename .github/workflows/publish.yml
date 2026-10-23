@@ -33,16 +33,33 @@ jobs:
     name: Publish
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # release 事件没有 inputs：`inputs.publish_clawhub` 是空值，任何 `== 'true'`
+      # 判断都为假 —— 0.11.1 那次 release 就是这样"成功"的：job 绿、每个发布步骤
+      # skipped、registry 上什么都没变。所以按事件类型显式给默认值：
+      # release = 两个 registry 都发、非 dry-run；dispatch 才看输入。
+      PUBLISH_CLAWHUB: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_clawhub == false && 'false' || 'true' }}
+      PUBLISH_SKILLHUB: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_skillhub == false && 'false' || 'true' }}
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v4
+
+      # job 绿不等于发了东西：先把本次模式打出来，两个开关同时关掉就直接失败。
+      - name: 打印本次发布模式
+        run: |
+          echo "event=${{ github.event_name }} clawhub=$PUBLISH_CLAWHUB skillhub=$PUBLISH_SKILLHUB dry_run=$DRY_RUN"
+          if [ "$PUBLISH_CLAWHUB" = "false" ] && [ "$PUBLISH_SKILLHUB" = "false" ]; then
+            echo "::error::ClawHub 与 SkillHub 都被关掉了，这次发布什么也不会发生"
+            exit 1
+          fi
 
       - name: Publish to ClawHub / SkillHub
         uses: ./.github/actions/publish
         with:
           slug: cgartlab-quill
           display-name: "CGArtLab Quill"
-          dry-run: ${{ inputs.dry_run }}
-          publish-clawhub: ${{ inputs.publish_clawhub }}
-          publish-skillhub: ${{ inputs.publish_skillhub }}
+          dry-run: ${{ env.DRY_RUN }}
+          publish-clawhub: ${{ env.PUBLISH_CLAWHUB }}
+          publish-skillhub: ${{ env.PUBLISH_SKILLHUB }}
           clawhub-token: ${{ secrets.CLAWHUB_TOKEN }}
           skillhub-api-key: ${{ secrets.SKILLHUB_API_KEY }}
