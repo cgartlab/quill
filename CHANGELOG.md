@@ -8,6 +8,54 @@
 
 ---
 
+## [0.11.1] - 2026-10-23
+
+**按 ClawHub 的安全检查反馈收紧隐私边界：读旧文章学作者、保存作者画像，都改成先问过再做；发给 registry 的安装包不再带开发资产。**
+
+### 对你有什么影响
+
+- **第一次用会先被问一句**："要不要读你的历史文章来学你怎么写？"不点头就不会去翻你的旧稿，也不会自动扫整个写作根目录——只读你自己挑的那几篇。
+- **画像留不留由你定**：默认写进本次项目文件夹的 `_author-profile.md`；只想用这一次就说一句，画在不落盘；说删就删。
+- **价值观与偏好要单独同意**：默认只学"怎么写"（习惯、审美、句子指纹）。"为什么这么写"要问过才提炼，你不同意就写"本次未提取"，不猜。
+- **披露模板不再自带会话链接**：会话里常有未公开草稿、私人信息、别人的材料，默认只披露工具与用途。
+- **安装包小了一截**：评测、研究笔记、开发文档不再进 registry 的包（ClawHub 上 0.11.0 是 51 个文件，本版 35 个）。
+
+### 修复
+
+- `evals/check-workspace.mjs` 的 `unchanged` 断言重新实现。旧逻辑只遍历跑完之后还存在的文件，于是**草稿被删掉也判"逐字节未变"**——守"用户草稿只读不写"的那条断言其实没在守。现在按快照路径逐个要求"还在、且哈希相同"，跑完之后新出现的受保护文件同样算破坏，一个都匹配不到的 pattern 直接判失败。
+- `evals/run.mjs` 的快照改在 agent 动手之前拍。旧版在判定函数里才拍，等于拿跑完的状态跟自己比，结论恒为真。
+- 新增 `evals/selftest-unchanged.mjs`：六条回归（原样不动通过 / 改一个字节失败 / 删除失败 / 删整个目录失败 / 新增同名文件失败 / 空匹配失败）。拿旧实现跑这份测试，删除那两条是绿的——漏洞的现场证据。
+
+### 调整
+
+- **第零步改成"先问再读"**：问读不读 → 只读他指定的篇目 → 记什么分两层（默认只提写法）→ 存不存再问一句 → 历史画像只在他点头时读。找不到文章仍然停下来问，不编画像。
+- `references/author-profiling.md` 增加「前置：先拿到同意」与删除约定；「读哪些」限定在他同意的范围内。
+- 环境探测收窄：只确认 `~/.cc-switch/skills/` 在不在、符号链接指向哪。`cc-switch.db` / `settings.json` 是 provider 配置（可能存 API key），不读，需要时先问。
+- `references/platform-compliance.md` 与 `references/sspai-format.md` 的披露模板去掉默认的"会话链接"，并写明贴链接前要先过一遍接收方能看到的全部内容。
+- **`SKILL.md` 开头口径改准**：从"AI 只做一致性与事实核查"改成"AI 起草完整草稿、人保留最终写作权与采纳决定"——第七步本来就要求出完整草稿，旧文案与实际流程自相矛盾。
+- frontmatter 声明 `allowed-tools`（Read / Write / Edit / Glob / Grep / WebSearch / WebFetch），让宿主知道这个 skill 会用到哪些工具。
+- **发布包与仓库分离**：`.github/actions/publish` 先打包再发布（排除 `evals/`、`docs/`、`writing-skill-dev-doc.md`、`.git`/`.github`、`node_modules`、`results/`），ClawHub 不再直接发整个仓库。
+
+<details>
+<summary>技术细节：ClawHub 对 0.11.0 的 8 条 findings 与本版处理</summary>
+
+判定：`suspicious`（ClawScan / gpt-6.1-sol，置信度 high；SkillSpector 69 分 / DO_NOT_INSTALL；静态扫描另报 1 条 critical）。逐条处理：
+
+| 类别 | 位置 | 处理 |
+|---|---|---|
+| SQP-2 画像未先征得同意 | `SKILL.md` 第零步 | 改 opt-in：分级授权、可不落盘、可删除 |
+| SDI-4 删除不被断言发现 | `evals/check-workspace.mjs` | 重写断言 + 六条回归 |
+| SDI-4 快照晚于 agent | `evals/run.mjs` | 快照前移到 agent 之前 |
+| SDI-2 探测 harness 配置 | `SKILL.md` / `references/environment-detection.md` / dev-doc | 只查 `skills/` 目录，不读数据文件 |
+| SQP-2 ×2 披露模板带会话链接 | `platform-compliance.md` / `sspai-format.md` | 删默认链接 + 隐私提醒 |
+| SDI-4 文案自相矛盾 | `SKILL.md` 开头 | 改为"AI 起草 + 人定去留" |
+| LP3 未声明工具范围 | frontmatter | 补 `allowed-tools` |
+| SC2 / `suspicious.dangerous_exec` | `docs/research/`、`evals/run.mjs` | 不进发布包（仓库内保留，属开发资产） |
+
+验证：`node scripts/validate-skill.mjs` 通过 · `node evals/selftest-unchanged.mjs` 6/6 · `node evals/run.mjs --dry-run` 计划正常 · 打包后 35 个文件、顶层无 `.github`/`evals`/`docs`。
+
+</details>
+
 ## [0.11.0] - 2026-10-15
 
 **跟进少数派创作手册 2026-10-15 修订版：新增 AI 使用披露细化规则 + 四级分级标准，题图尺寸改指向官方页面。**
@@ -685,3 +733,4 @@ quill 原先的规则覆盖了**外部来源**（文献假引）与**用户经�
 [0.9.0]: https://github.com/cgartlab/quill/releases/tag/v0.9.0
 [0.10.0]: https://github.com/cgartlab/quill/releases/tag/v0.10.0
 [0.11.0]: https://github.com/cgartlab/quill/releases/tag/v0.11.0
+[0.11.1]: https://github.com/cgartlab/quill/releases/tag/v0.11.1

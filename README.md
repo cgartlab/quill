@@ -92,7 +92,7 @@ quill/
 ├── SKILL.md                      # 清单 + 工作流 + 环境探测 + 硬规则
 ├── CHANGELOG.md                  # 版本变更
 ├── references/                   # 13 份按需加载的参考
-│   ├── author-profiling.md       # 读作者：从近 10 篇学价值观/习惯/审美/偏好（第零步）
+│   ├── author-profiling.md       # 读作者：先问过再读他同意的篇目，学习惯/审美/句子指纹（第零步）
 │   ├── draft-routing.md          # 按草稿状态分流：无草稿/部分/完整三条线
 │   ├── environment-detection.md  # 环境探测与适配
 │   ├── conception-guide.md       # 构思引导：核心疑问 + 三轮提问 + 说话位置五问
@@ -114,6 +114,7 @@ quill/
 ├── evals/                        # 8 条结构性用例 + fixture
 │   ├── evals.json                # 用例定义：checks（机械断言）+ expectations（散文断言）
 │   ├── check-workspace.mjs       # 机械断言执行器：文件 / frontmatter / 用户草稿是否被改
+│   ├── selftest-unchanged.mjs    # 断言执行器自己的回归：删除/改动/新增都要判得出来
 │   ├── run.mjs                   # 跑测编排：带 skill 与不带 skill 两条腿，量 Skill Lift
 │   └── files/                    # eval 2 的 fixture
 ├── scripts/
@@ -144,6 +145,8 @@ skill 会腐坏——引用断链、版本号漂移、示例文章混进自己�
 要花模型调用的那道闸门单独放在 `skill-evals.yml`（手动或每周一）。它为每条用例建两个工作目录，一条挂 skill、一条不挂，同模型同 prompt 同断言，**唯一变量是 `SKILL.md`**——差值就是 Skill Lift。
 
 > 为什么不跑基线就没有意义：在 947 组配对样本上，真实 skill 的平均 Lift 只有 0.2134，且只有 72.8% 为正（[ACES, arXiv:2608.20614](https://arxiv.org/abs/2608.20614)）。**约四分之一的 skill 对结果没有贡献甚至有害**——只跑带 skill 的那条腿，你永远不会知道。
+
+断言执行器自己也有人盯着：`node evals/selftest-unchanged.mjs` 用六个场景检查 `unchanged` 断言——受保护文件被删、被改、整个目录消失、跑完又冒出一份同名文件，都必须报出来。这条断言守的是"不碰用户草稿"，它失灵过一次（只遍历跑后仍存在的文件，草稿被删反而通过）。
 
 设计取舍与出处见 [`docs/research/skill-ci-continuous-improvement.md`](./docs/research/skill-ci-continuous-improvement.md)。
 
