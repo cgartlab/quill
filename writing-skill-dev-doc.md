@@ -1,8 +1,8 @@
 # Quill Skill 开发文档
 
-**版本**：0.11.0
+**版本**：0.11.1
 **状态**：0.x 开发中（模型驱动 + 少数派格式 + 环境自动探测 + 文件边界 + 材料门槛 + 材料身份 + 完整草稿 + 写作工艺 + 形式分流 + 硬规则 + 禁令后置与分档）。流程与文件约定尚未稳定，破坏性变更是常事。
-**最后更新**：2026-10-16
+**最后更新**：2026-10-23
 
 ---
 
@@ -116,7 +116,7 @@ SKILL.md 第九步内置"验证（模型驱动）"清单，模型读取七文件
 - 新增 `references/environment-detection.md`：探测信号（环境变量 / 配置目录 / Vault 特征 / 可用工具 / 上下文提示 / CC Switch（按需））+ 逐环境适配要点（Codex / Claude Code / OpenCode / Obsidian Agent Client / DSH / CC Switch 托管 / 其他）+ 通用不变量 + 探测结果记录。
 - SKILL.md 设"环境自动探测与适配"段：激活时先探测、综合判断、按环境适配、一句话向用户确认；不确定则列候选请用户确认。
 - 这是自动探测功能，不是手动配置；所有探测由模型读取环境得出，不跑脚本。
-- CC Switch 探测（按需，仅在技术上有真实需要时）：查 ~/.cc-switch/（cc-switch.db / settings.json / skills/）。若 Quill 由 CC Switch 托管，skill 源在 ~/.cc-switch/skills/quill/（符号链接进各 app）；改 skill 本身时改源、勿改链接副本。provider 切换对写作任务无直接影响。
+- CC Switch 探测（按需，仅在技术上有真实需要时）：只查 `~/.cc-switch/skills/` 在不在、符号链接指向哪。若 Quill 由 CC Switch 托管，skill 源在 `~/.cc-switch/skills/quill/`（符号链接进各 app）；改 skill 本身时改源、勿改链接副本。`cc-switch.db` 与 `settings.json` 属 provider 配置（可能含 API key），**不读**；需要时先问用户。provider 切换对写作任务无直接影响。
 
 ## 九、草稿反驳规则（阶段四落地能力）
 
@@ -264,6 +264,24 @@ gh release create v<版本> --title "v<版本>" --notes-file <片段文件>
 ### 补历史 tag
 
 本项目从 0.1.0 起打 tag。0.1.0 之前的 2.x 迭代未打 tag，那套编号也不作为版本记录——需要回溯时用 `git log --oneline` 查提交。
+
+## 十六、隐私边界与发布包（0.11.1）
+
+ClawHub 的安全扫描对 0.11.0 判定 `suspicious`，主因是"没先征得同意就读历史文章、还把推断出的画像存下来"。0.11.1 分三层处理：
+
+### 1. 读作者的授权链（`SKILL.md` 第零步）
+
+问读不读 → 只读他指定的篇目 → 记什么分两层（默认只提写法：习惯 / 审美 / 句子指纹；价值观 / 偏好单独问）→ 存不存再问一句 → 历史画像只在他点头时读。任一环节他拒绝，都照常写，只是没有画像依据——不因为没有画像就编一份。
+
+### 2. 环境探测不碰凭据
+
+只确认 `~/.cc-switch/skills/` 在不在、符号链接指向哪儿。`cc-switch.db` 与 `settings.json` 是 provider 配置，可能存着 API key——不读；确实需要，先问用户。
+
+### 3. 发布包与仓库分离
+
+`.github/actions/publish` 先打一次包（`$RUNNER_TEMP/skill-pkg`），ClawHub 与 SkillHub 都发这份产物。排除：`.git`、`./.*`（含 `.github`）、`node_modules`、`results`、`evals`、`docs`、`writing-skill-dev-doc.md`。理由：评测编排里的 `child_process`、研究笔记里当反面教材引用的 `curl | bash`、开发文档里对 harness 配置目录的描述，都会被安全检查算成安装包的攻击面。
+
+排除清单只写在打包步骤一处；要改就改那一处，别在别处再抄一份。
 
 
 

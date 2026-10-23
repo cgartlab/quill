@@ -85,10 +85,16 @@ function runAgent(ws, prompt) {
   return { code: r.status, stdout: r.stdout ?? '', stderr: r.stderr ?? '', error: r.error ? String(r.error.message) : null };
 }
 
-// 复用 check-workspace.mjs：判定逻辑只写一遍，CI 与本地跑的是同一套
-function verify(evalId, ws, outFile) {
+// 拍快照必须在 agent 动手**之前**。放在 verify() 里等于跑完之后给跑完之后拍快照，
+// 「用户草稿逐字节未变」就会拿跑完的状态跟自己比，永远为真 —— 这条承诺等于没验证。
+function snapshotWorkspace(ws) {
   const snapshot = join(ws, '.quill-snapshot.json');
   spawnSync(process.execPath, [join(REPO, 'evals', 'check-workspace.mjs'), '--workspace', ws, '--snapshot', snapshot], { encoding: 'utf8' });
+  return snapshot;
+}
+
+// 复用 check-workspace.mjs：判定逻辑只写一遍，CI 与本地跑的是同一套
+function verify(evalId, ws, snapshot, outFile) {
   const r = spawnSync(process.execPath, [
     join(REPO, 'evals', 'check-workspace.mjs'), '--eval', String(evalId),
     '--workspace', ws, '--snapshot', snapshot, '--out', outFile,
@@ -183,6 +189,8 @@ for (const e of evals) {
       mountSkill(ws, arm);
       const outFile = join(RESULTS, 'eval-' + e.id + '-' + arm + '-t' + trial + '.json');
       const prompt = e.prompt;
+      // 快照要在 agent 之前拍：它是「跑之前」的唯一证据
+      const snapshot = snapshotWorkspace(ws);
 
       console.log('\n>>> #' + e.id + ' [' + arm + '] trial ' + trial);
       const agent = runAgent(ws, prompt);
@@ -190,7 +198,7 @@ for (const e of evals) {
         agent.stdout + '\n--- stderr ---\n' + agent.stderr);
       if (agent.error) console.log('    agent 启动失败：' + agent.error);
 
-      const v = verify(e.id, ws, outFile);
+      const v = verify(e.id, ws, snapshot, outFile);
       const ok = v.pass && agent.code === 0;
       record.runs.push({ arm, trial, pass: ok, agentExit: agent.code });
       console.log('    机械断言 ' + (v.pass ? '通过' : '不通过') + ' · agent 退出码 ' + agent.code);

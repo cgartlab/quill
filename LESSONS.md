@@ -46,3 +46,11 @@
 - 失误：`evals/README.md` 读取乱码 → 规则：Windows 侧需 UTF-8 BOM（commit 7de8ab0）
 - 失误：CHANGELOG 缺 `[0.11.0]` 链接引用 → 规则：Keep a Changelog 的版本条目必须有对应 link reference（commit 9d9fc74）
 - 失误：版本号与 dev-doc 断言不一致 → 规则：dev-doc 加版本断言（B8），版本变化同步断言（commit 2842191）
+
+## 发布与安全扫描
+
+- 失误：ClawHub 直接发整个仓库，`evals/run.mjs` 的 `spawnSync` 被判 critical、研究笔记里当反面教材引用的 `curl | bash` 被算成行为证据 → 规则：registry 发布包与仓库分离，先打包再发（排除 `evals/` `docs/` dev-doc），排除清单只写在 `.github/actions/publish` 打包步骤那一处
+- 失误：`unchanged` 断言只遍历跑后仍存在的文件，草稿被删掉也判"逐字节未变" → 规则：关于"还在不在"的断言必须双向遍历（快照→现在查删除与改动，现在→快照查新增），并配自测 `evals/selftest-unchanged.mjs`
+- 失误：`evals/run.mjs` 在 agent 跑完之后才拍快照 → 规则：快照必须在被测动作之前拍，晚一步就等于拿结果跟结果比
+- 失误：披露模板默认带"会话链接" → 规则：会把对话内容交给第三方的模板默认不写，需要时由作者确认接收方能看到的全部内容
+- 失误：读用户全部历史文章、把推断出的画像落盘，都不打招呼 → 规则：读私人语料与持久化推断都要先问，分级授权、可不落盘、随时可删

@@ -98,6 +98,35 @@ runs:
         echo "version=$VERSION" >> "$GITHUB_OUTPUT"
         echo "::notice::publishing $SLUG@$VERSION"
 
+    # ---------------- 打包（发布包 ≠ 整个仓库） ----------------
+    # evals/、docs/、dev-doc 是开发资产，使用者不需要。它们还会被安全检查逐行读：
+    # 评测编排里的 child_process、研究笔记里当反面教材引用的「curl | bash」、
+    # 开发文档里对 harness 配置目录的描述，都会被算成发布版本的攻击面。
+    # 所以两个 registry 发同一份打包产物，排除清单只写这一处。
+    - name: 打包发布物（排除开发资产）
+      id: pack
+      shell: bash
+      env:
+        SKILL_DIR: ${{ inputs.skill-dir }}
+      run: |
+        set -euo pipefail
+        PKG="$RUNNER_TEMP/skill-pkg"
+        rm -rf "$PKG"
+        mkdir -p "$PKG"
+        tar -C "${SKILL_DIR%/}" \
+          --exclude='./.git' \
+          --exclude='./.*' \
+          --exclude='./node_modules' \
+          --exclude='./results' \
+          --exclude='./evals' \
+          --exclude='./docs' \
+          --exclude='./writing-skill-dev-doc.md' \
+          -cf - . | tar -C "$PKG" -xf -
+        test -f "$PKG/SKILL.md"
+        echo "package=$PKG" >> "$GITHUB_OUTPUT"
+        echo "::notice::发布包共 $(find "$PKG" -type f | wc -l) 个文件"
+        find "$PKG" -maxdepth 1 -mindepth 1 -printf '  %f\n' | sort
+
     # ---------------- ClawHub ----------------
     - name: ClawHub — install CLI
       if: inputs.publish-clawhub == 'true'
@@ -128,14 +157,14 @@ runs:
       if: inputs.publish-clawhub == 'true'
       shell: bash
       env:
-        SKILL_DIR: ${{ inputs.skill-dir }}
+        PKG: ${{ steps.pack.outputs.package }}
         SLUG: ${{ inputs.slug }}
         DISPLAY_NAME: ${{ inputs.display-name }}
         VERSION: ${{ steps.meta.outputs.version }}
         DRY_RUN: ${{ inputs.dry-run }}
       run: |
         set -euo pipefail
-        ARGS=( "$SKILL_DIR" --slug "$SLUG" --name "$DISPLAY_NAME" --version "$VERSION" )
+        ARGS=( "$PKG" --slug "$SLUG" --name "$DISPLAY_NAME" --version "$VERSION" )
         if [ "$DRY_RUN" = "true" ]; then
           ARGS+=(--dry-run)
         fi
@@ -147,7 +176,7 @@ runs:
       if: inputs.publish-skillhub == 'true'
       shell: bash
       env:
-        SKILL_DIR: ${{ inputs.skill-dir }}
+        PKG: ${{ steps.pack.outputs.package }}
         SLUG: ${{ inputs.slug }}
         DISPLAY_NAME: ${{ inputs.display-name }}
         VERSION: ${{ steps.meta.outputs.version }}
@@ -155,16 +184,10 @@ runs:
         set -euo pipefail
         STAGE="$RUNNER_TEMP/skillhub-stage"
         rm -rf "$STAGE"
-        mkdir -p "$STAGE"
+        cp -R "$PKG" "$STAGE"
 
-        # SkillHub 只接受已知文件类型，会以 400 拒绝无扩展名文件（如 LICENSE），
-        # 也不该把 .git / .github 打进发布包。用 tar 精确排除后，再把残留的
-        # 无扩展名文件清掉并记录下来。
-        tar -C "${SKILL_DIR%/}" \
-          --exclude='./.*' \
-          --exclude='./node_modules' \
-          -cf - . | tar -C "$STAGE" -xf -
-
+        # SkillHub 只接受已知文件类型，会以 400 拒绝无扩展名文件（如 LICENSE）。
+        # 发布包已在打包步骤排除了开发资产，这里只清掉残留的无扩展名文件并记录下来。
         removed="$(find "$STAGE" -type f ! -name '*.*' -print -delete)"
         if [ -n "$removed" ]; then
           echo "::warning::SkillHub 不接受无扩展名文件，已从发布包剔除: $removed"

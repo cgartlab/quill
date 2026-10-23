@@ -26,7 +26,7 @@ audience: skill-self
 | 工作目录特征 | 是否在 Obsidian Vault（含 `00-Inbox` `04-归档` 等 PARA 目录、`.obsidian/`） | Obsidian Agent Client |
 | 可用工具 | 是否有 `obsidian` CLI、文件工具名（read/write/edit）、`present` 工具 | Obsidian Agent Client / DSH / 通用 |
 | 上下文提示 | 系统提示里的 harness 自称、AGENTS.md / CLAUDE.md 是否在仓 | 各 harness |
-| CC Switch（按需） | 查 `~/.cc-switch/`（`cc-switch.db` / `settings.json` / `skills/`） | 由 CC Switch 托管配置与 skill 符号链接 |
+| CC Switch（按需） | 只查 `~/.cc-switch/skills/` 是否存在、符号链接指向何处 | 由 CC Switch 托管配置与 skill 符号链接 |
 
 ## 适配要点
 
@@ -37,7 +37,7 @@ audience: skill-self
 - **OpenCode（`.opencode/skills/quill/` 项目级，或 `~/.config/opencode/skills/quill/` 全局）**：项目级优先；按 OpenCode 的 skill 加载语义。
 - **Obsidian Agent Client（ACP）**：在 Vault 内工作；优先用 `obsidian` CLI（前提：Obsidian 桌面应用在运行）；遵循 Vault 的 PARA / frontmatter / 双链 / 脚注约定；文章落 `40-Writing/`。
 - **DSH（DeepSeek Harness）**：用 `read` / `write` / `edit`、`present` 声明交付；`write` 在某些工作区可能受限（如 EISDIR），改用 PowerShell `Set-Content -Encoding utf8NoBOM` 落盘。
-- **CC Switch 托管（`~/.cc-switch/` 存在）**：CC Switch 是管理 Claude Code / Codex / Gemini CLI / OpenCode / OpenClaw / Hermes 等多 CLI 的桌面层，把 skill 从 `~/.cc-switch/skills/quill/` 符号链接进各 app。技术上的真实需要是：**当要修改 Quill skill 本身时**，改 `~/.cc-switch/skills/quill/` 源文件，勿改各 app 下的链接副本（否则切换 provider 后可能丢失）；安装/更新 Quill 走 CC Switch 的 Skills 面板（GitHub/ZIP 一键安装，双向同步）。provider 切换对写作任务无直接影响，仅在维护 skill 时关心。
+- **CC Switch 托管（`~/.cc-switch/` 存在）**：CC Switch 是管理 Claude Code / Codex / Gemini CLI / OpenCode / OpenClaw / Hermes 等多 CLI 的桌面层，把 skill 从 `~/.cc-switch/skills/quill/` 符号链接进各 app。技术上的真实需要是：**当要修改 Quill skill 本身时**，改 `~/.cc-switch/skills/quill/` 源文件，勿改各 app 下的链接副本（否则切换 provider 后可能丢失）；安装/更新 Quill 走 CC Switch 的 Skills 面板（GitHub/ZIP 一键安装，双向同步）。只碰 `skills/` 这个目录——`cc-switch.db` 与 `settings.json` 是 provider 配置，可能存着 API key，**不读**；确实需要看再问用户。provider 切换对写作任务无直接影响，仅在维护 skill 时关心。
 - **其他 / 不确定**：用最通用的文件读写方式；列候选环境请用户确认。
 
 ## 通用不变量（任何环境都遵守）
