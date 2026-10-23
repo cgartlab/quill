@@ -30,6 +30,15 @@
 
 ## 安装
 
+### 从 registry 装（一行）
+
+```bash
+clawhub install cgartlab-quill      # ClawHub
+skillhub install cgartlab-quill     # SkillHub（同名同版本）
+```
+
+两个源发的是同一份打包产物：只含 `SKILL.md`、`references/`、`assets/`、`scripts/` 与说明文档，**不含**评测、研究笔记和开发文档。ClawHub 的版本在通过安全扫描之前是 pending 状态，装不到属正常。
+
 ### 最快：把这段发给 Agent
 
 ```
