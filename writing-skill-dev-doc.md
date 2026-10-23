@@ -43,7 +43,7 @@ quill/
 ├── SKILL.md                      # manifest + 工作流 + 环境自动探测 + 硬规则
 ├── CHANGELOG.md                  # 版本变更（面向使用者）
 ├── references/                   # 13 份按需加载的参考
-│   ├── author-profiling.md       # 读作者：近 10 篇 → 价值观/习惯/审美/偏好（第零步）
+│   ├── author-profiling.md       # 读作者：先问过再读他同意的篇目，学习惯/审美/句子指纹（第零步）
 │   ├── draft-routing.md          # 按草稿状态分流：无/部分/完整三条线
 │   ├── environment-detection.md  # 环境自动探测与适配
 │   ├── conception-guide.md       # 构思引导：核心疑问 + 三轮提问 + 说话位置五问
@@ -77,17 +77,25 @@ quill/
 ├── docs/research/                # 设计依据（logo SVG 生成调研）
 ├── evals/                        # 结构性 evals
 │   ├── evals.json                # 8 个结构性测试用例（38 条断言）
+│   ├── check-workspace.mjs       # 机械断言执行器（文件 / frontmatter / 受保护文件是否被改或删）
+│   ├── selftest-unchanged.mjs    # 执行器自己的回归：删除 / 改动 / 新增 / 空匹配都要判出来
+│   ├── run.mjs                   # 跑测编排：带 skill 与不带 skill 两条腿，量 Skill Lift
 │   ├── README.md                 # 运行方法 + skill-creator 工具问题记录
 │   └── files/existing-draft/     # 已有草稿 fixture（文件名无关检测用）
 ├── scripts/
 │   └── validate-skill.mjs        # 零依赖静态校验器（A–F 六组；仓库自检，不参与写作）
-├── .github/workflows/
-│   ├── skill-quality.yml         # 静态校验：每次 push / PR（免费）
-│   └── skill-evals.yml           # 真实 eval：手动 / 每周一（花 API，度量 Skill Lift）
+├── .github/
+│   ├── workflows/
+│   │   ├── skill-quality.yml     # 静态校验：每次 push / PR（免费）
+│   │   ├── skill-evals.yml       # 真实 eval：手动 / 每周一（花 API，度量 Skill Lift）
+│   │   └── publish.yml           # Release 或手动：发到 ClawHub / SkillHub
+│   └── actions/publish/          # 发布逻辑：先打包（排除开发资产）再发两个 registry
 ├── LICENSE                       # CC BY-NC-SA 4.0
 ├── README.md                     # 面向使用者的说明
 └── writing-skill-dev-doc.md      # 本文档
 ```
+
+发布包 ≠ 整个仓库：`evals/`、`docs/`、`writing-skill-dev-doc.md` 与 `.github` 不进 registry 的安装包（见「十六、隐私边界与发布包」）。
 
 写作流程无脚本——原 `scaffold / verify / compile` 三项操作以模型指令形式留在 SKILL.md 的第一、九、十步；反驳是新增的第八步。
 
