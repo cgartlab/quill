@@ -168,8 +168,11 @@ runs:
         if [ "$DRY_RUN" = "true" ]; then
           ARGS+=(--dry-run)
         fi
-        clawhub publish "${ARGS[@]}"
-        echo "::notice::ClawHub: $SLUG@$VERSION $( [ "$DRY_RUN" = "true" ] && echo '(dry run)' || echo 'published' )"
+        out="$(clawhub publish "${ARGS[@]}" 2>&1)"
+        printf '%s\n' "$out"
+        # CLI 的 accepted 只是"已提交"：版本要等 ClawHub 的安全扫描跑完才对外可见
+        # （v0.11.1 提交后二十多分钟仍是 pending）。别把提交写成发布。
+        echo "::notice::ClawHub: $SLUG@$VERSION $( [ "$DRY_RUN" = "true" ] && echo '(dry run)' || echo 'submitted — 待安全扫描通过后对外可见' )"
 
     # ---------------- SkillHub ----------------
     - name: SkillHub — stage skill with registry metadata
