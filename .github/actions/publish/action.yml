@@ -34,6 +34,14 @@ inputs:
     description: '"true" 只校验与打包，不联系任何 registry'
     required: false
     default: "false"
+  categories:
+    description: "ClawHub 浏览分类（逗号分隔，最多 3 个，必须是官方 slug）"
+    required: false
+    default: ""
+  topics:
+    description: "ClawHub 主题标签（逗号分隔，最多 5 个，每个 ≤48 字符）"
+    required: false
+    default: ""
   clawhub-token:
     description: ClawHub API token（clh_...）
     required: false
@@ -162,13 +170,39 @@ runs:
         DISPLAY_NAME: ${{ inputs.display-name }}
         VERSION: ${{ steps.meta.outputs.version }}
         DRY_RUN: ${{ inputs.dry-run }}
+        CATEGORIES: ${{ inputs.categories }}
+        TOPICS: ${{ inputs.topics }}
+        SRC_REPO: ${{ github.repository }}
+        SRC_COMMIT: ${{ github.sha }}
+        SRC_REF: ${{ github.ref_name }}
       run: |
         set -euo pipefail
+
+        # 官方文档里的发布路径是 `clawhub skill publish`（`publish` 只是 legacy alias）。
+        # 三条以前漏掉、会被 registry 记录下来的信息：
+        #   1) --categories/--topics：不传时 skill 被归到 other，浏览页里搜不到
+        #   2) --changelog：版本页的更新说明（从 CHANGELOG.md 切本版段落）
+        #   3) --source-repo/--commit/--ref：provenance；不传则 verify 里是 source: unavailable
         ARGS=( "$PKG" --slug "$SLUG" --name "$DISPLAY_NAME" --version "$VERSION" )
+
+        if [ -n "$CATEGORIES" ]; then ARGS+=( --categories "$CATEGORIES" ); fi
+        if [ -n "$TOPICS" ]; then ARGS+=( --topics "$TOPICS" ); fi
+
+        CHANGELOG_TEXT="$(awk -v ver="$VERSION" '
+          index($0, "## [" ver "]") == 1 { f = 1; next }
+          f && index($0, "## [") == 1 { exit }
+          f { print }
+        ' "$PKG/CHANGELOG.md" 2>/dev/null | sed '/^[[:space:]]*$/d' | head -40 || true)"
+        if [ -n "$CHANGELOG_TEXT" ]; then ARGS+=( --changelog "$CHANGELOG_TEXT" ); fi
+
+        if [ -n "$SRC_REPO" ] && [ -n "$SRC_COMMIT" ]; then
+          ARGS+=( --source-repo "$SRC_REPO" --source-commit "$SRC_COMMIT" --source-ref "${SRC_REF:-main}" --source-path . )
+        fi
+
         if [ "$DRY_RUN" = "true" ]; then
           ARGS+=(--dry-run)
         fi
-        out="$(clawhub publish "${ARGS[@]}" 2>&1)"
+        out="$(clawhub skill publish "${ARGS[@]}" 2>&1)"
         printf '%s\n' "$out"
         # CLI 的 accepted 只是"已提交"：版本要等 ClawHub 的安全扫描跑完才对外可见
         # （v0.11.1 提交后二十多分钟仍是 pending）。别把提交写成发布。
