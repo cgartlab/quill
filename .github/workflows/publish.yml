@@ -58,6 +58,8 @@ jobs:
         with:
           slug: cgartlab-quill
           display-name: "CGArtLab Quill"
+          categories: creative,knowledge,productivity
+          topics: writing,long-form,chinese,drafting,editing
           dry-run: ${{ env.DRY_RUN }}
           publish-clawhub: ${{ env.PUBLISH_CLAWHUB }}
           publish-skillhub: ${{ env.PUBLISH_SKILLHUB }}
