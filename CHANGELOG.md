@@ -8,6 +8,29 @@
 
 ---
 
+## [0.11.2] - 2026-10-25
+
+**内容与 0.11.1 一致，只是重新发布一次：0.11.1 的扫描卡在 ClawHub 的 SkillSpector 阶段，版本槽位被占、永远不可见，只能换版本号重发。**
+
+### 对你有什么影响
+
+- 装到的内容与 0.11.1 相同（隐私边界收紧、发布包瘦身都在里面），只有 SKILL.md 的版本号与本文件变了。
+- 0.11.1 这个版本不会出现在 registry 上，也不占 latest——你看到的会是 0.11.0（旧）或 0.11.2（新）。
+
+### 修复
+
+- 重新提交发布，包内容除版本号与 CHANGELOG 外与 0.11.1 一致（35 个文件）。
+
+<details>
+<summary>技术细节：为什么是重发而不是重试</summary>
+
+- 0.11.1 提交后 `publicationStatus: pending`；随后的 ClawScan 报 `Worker error: ClawScan scanner skillspector status was failed`，`writtenBack: false`，`skillspector: null`。
+- 对照扫描同 slug 的 0.11.0（此前扫通过的旧包）→ 同样失败在 skillspector，说明与包内容无关（与 ClawHub 侧 worker 状态有关）。
+- 重发同一版本被拒：`Version 0.11.1 already exists`。ClawHub 既有 issue #4046 / #4047 记录了这一形态——扫描失败后版本槽位保留，恢复接口需要 OpenClaw 授权，社区 token 无法自救。
+- 因此本版只改版本号与文档，其余逐字节与 0.11.1 相同。
+
+</details>
+
 ## [0.11.1] - 2026-10-23
 
 **按 ClawHub 的安全检查反馈收紧隐私边界：读旧文章学作者、保存作者画像，都改成先问过再做；发给 registry 的安装包不再带开发资产。**
@@ -735,3 +758,4 @@ quill 原先的规则覆盖了**外部来源**（文献假引）与**用户经�
 [0.10.0]: https://github.com/cgartlab/quill/releases/tag/v0.10.0
 [0.11.0]: https://github.com/cgartlab/quill/releases/tag/v0.11.0
 [0.11.1]: https://github.com/cgartlab/quill/releases/tag/v0.11.1
+[0.11.2]: https://github.com/cgartlab/quill/releases/tag/v0.11.2
