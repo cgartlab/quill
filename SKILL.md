@@ -4,10 +4,10 @@ description: 结构化长文写作框架：把模糊的写作意图整理成有�
 license: CC-BY-NC-SA-4.0
 allowed-tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
 metadata:
+  kind: skill
   version: 0.11.3
   date: "2026-11-01"
-  reference: "https://github.com/cgartlab/quill"
----
+  reference: "https://github.com/cgartlab/quill"---
 
 # Quill：结构化长文写作框架
 
