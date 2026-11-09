@@ -160,7 +160,9 @@ function checkIntegrity() {
   if (!entries.length) return fail(G, 'B4', 'CHANGELOG.md 里没有 `## [x.y.z] - yyyy-mm-dd` 格式的条目');
   const topVer = entries[0][1];
   const topDate = entries[0][2];
-  const meta = parseFrontmatter(skill).data.metadata || {};
+  const _fm = parseFrontmatter(skill);
+  if (!_fm) return fail(G, 'B4', 'SKILL.md frontmatter 解析失败（--- 分隔符未独立成行或存在粘连）');
+  const meta = _fm.data.metadata || {};
 
   if (meta.version !== topVer)
     fail(G, 'B4', '版本不一致：SKILL.md metadata.version=' + meta.version + '，CHANGELOG 最新=' + topVer);

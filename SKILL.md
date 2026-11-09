@@ -7,7 +7,8 @@ metadata:
   kind: skill
   version: 0.11.3
   date: "2026-11-01"
-  reference: "https://github.com/cgartlab/quill"---
+  reference: "https://github.com/cgartlab/quill"
+---
 
 # Quill：结构化长文写作框架
 
