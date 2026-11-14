@@ -405,6 +405,37 @@ function checkEventRule() {
   else if (!/不能替你造|不能造一个|没有可核实的现场/.test(draft))
     warn(G, 'E3', '示例草稿没把「拒绝编造现场」写进起草说明——正确行为必须被示范，不能靠碰巧');
   else pass(G, 'E3', '示例草稿示范了拒绝编造现场');
+
+  // E4 示例正文里出现「我见过 / 我试过 / 上周 / 我遇到 / 有一次我」这类第一人称亲历，
+  //    必须在示例 evidence.md 的「经历与事件来源」表里找到对应行（含「我」「亲历」「①」等）。
+  //    原因：E3 只 grep 起草说明的固定句，查不到**正文里**偷偷写出来的现场——
+  //    我们自己就犯过这个错（示例正文写了「我见过四十个首页方案」，起草说明却说不能替作者造现场）。
+  if (draft) {
+    const ev = has('assets/examples/sample-article/evidence.md') ? read('assets/examples/sample-article/evidence.md') : '';
+    const expTable = ev.slice(ev.indexOf('经历与事件来源'), ev.indexOf('## 证据清单'));
+    const bodyStart = draft.indexOf('## 全文');
+    const bodyEnd = draft.indexOf('## 起草说明');
+    const body = bodyStart >= 0 && bodyEnd > bodyStart ? draft.slice(bodyStart, bodyEnd) : '';
+    const claimRe = /(我见过|我试过|上周|我遇到|有一次我|前年|去年我|那天我)/g;
+    const hits = [...body.matchAll(claimRe)].map((m) => m[1]);
+    // 判定：这段第一人称亲历必须能在经历表里找到**一行明确是已确认亲历**的记录。
+    // 「（用户草稿开篇）…待用户确认」这类行不算确认——它恰恰说明 Agent 没用、也不能用那段现场。
+    // 所以：先剔除带「待用户确认 / 未采用 / Agent 草稿未 / 待补」的行，再看剩下行里有没有 ① 或「亲历」。
+    const confirmedRows = expTable
+      .split(/\n/)
+      .filter((row) => row.trim().startsWith('|') && !/待用户确认|未采用|Agent 草稿未|待补|请作者补/.test(row))
+      .filter((row) => /①|亲历/.test(row));
+    // 只认 confirmedRows 里明确写出该词的行；**不再用 `expTable.includes(h)` 兜底**——
+    // 那会把「待用户确认」的行也算成来源（实测漏报）。
+    // 另外先剥掉引号内的转述（「他说：我试过…」不是作者亲历），避免误报。
+    const bodyNoQuotes = body.replace(/「[^」]*」/g, '').replace(/『[^』]*』/g, '');
+    const hits2 = [...bodyNoQuotes.matchAll(claimRe)].map((m) => m[1]);
+    const unsourced = hits2.filter((h) => !confirmedRows.some((r) => r.includes(h)));
+    if (unsourced.length)
+      fail(G, 'E4', '示例正文出现第一人称亲历但没有对应的来源行：' + [...new Set(unsourced)].join(' / '),
+        '正文里"我见过/我试过"是编造现场的高危信号——必须在 evidence 的经历表里指认一行已确认亲历，否则删掉或标缺口');
+    else pass(G, 'E4', '示例正文第一人称亲历均有对应来源（或无此类表述）');
+  }
 }
 
 // ============================================== F. 工作流形态（0.7.0：读作者 + 分流 + 提问纪律）
